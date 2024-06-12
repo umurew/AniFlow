@@ -1,0 +1,266 @@
+﻿<Window
+    x:Class="AniFlow_.NET.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AniFlow_.NET"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="MasterWindow"
+    Title="AniFlow"
+    Width="800"
+    Height="450"
+    MinWidth="800"
+    MinHeight="450"
+    AllowsTransparency="True"
+    Background="{x:Null}"
+    Icon="aniflow-logo.png"
+    Loaded="MasterWindow_Loaded"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Grid x:Name="MasterGrid">
+        <Grid
+            x:Name="TitleBarGrid"
+            Height="40"
+            VerticalAlignment="Top"
+            Background="#212121"
+            MouseDown="TitleBarGrid_MouseDown">
+            <Image
+                x:Name="TitleBarIcon"
+                Width="40"
+                Height="40"
+                Margin="5,0,5,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Source="aniflow-logo.png" />
+            <Grid Width="auto" HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    x:Name="MinimizeButton"
+                    Grid.Column="0"
+                    Width="50"
+                    Height="40"
+                    Background="#00848484"
+                    BorderBrush="{x:Null}"
+                    Click="MinimizeButton_Click"
+                    Content="&#xE921;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="10"
+                    Foreground="#CCCCCC"
+                    Style="{DynamicResource FullTransparent-Opaque-Background-Button}" />
+                <Button
+                    x:Name="MaximizeButton"
+                    Grid.Column="1"
+                    Width="50"
+                    Height="40"
+                    Background="#00848484"
+                    BorderBrush="{x:Null}"
+                    Click="MaximizeButton_Click"
+                    Content="&#xE922;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="10"
+                    Foreground="#CCCCCC"
+                    Style="{DynamicResource FullTransparent-Opaque-Background-Button}" />
+                <Button
+                    x:Name="ExitButton"
+                    Grid.Column="3"
+                    Width="50"
+                    Height="40"
+                    Background="#00D10000"
+                    BorderBrush="{x:Null}"
+                    Click="ExitButton_Click"
+                    Content="&#xE8BB;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="10"
+                    Foreground="#CCCCCC"
+                    Style="{DynamicResource FullTransparent-Opaque-Background-Red-Button}" />
+            </Grid>
+        </Grid>
+        <Grid
+            x:Name="NavigationBarGrid"
+            Width="50"
+            Margin="0,40,0,0"
+            HorizontalAlignment="Left"
+            Background="#1F1F1F">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <Button
+                x:Name="NavigationButton"
+                Grid.Row="0"
+                Margin="0,0,1,0"
+                Background="#FF222222"
+                BorderBrush="Transparent"
+                BorderThickness="0.3"
+                Click="NavigationButton_Click"
+                Content="&#xE700;"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="16"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
+            <Button
+                x:Name="LibrarySwitchButton"
+                Grid.Row="1"
+                Margin="0,0,1,0"
+                Background="#FF222222"
+                BorderBrush="#00000000"
+                BorderThickness="0.3"
+                Click="LibrarySwitchButton_Click"
+                Content="&#xE1D3;"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="16"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
+            <Button
+                x:Name="CreditsSwitchButton"
+                Grid.Row="2"
+                Margin="0,0,1,0"
+                Background="#FF222222"
+                BorderBrush="Transparent"
+                BorderThickness="0.3"
+                Click="CreditsSwitchButton_Click"
+                Content="&#xE779;"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="16"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
+            <Button
+                x:Name="AddLibraryItemButton"
+                Grid.Row="4"
+                Margin="0,0,1,0"
+                Background="#FF222222"
+                BorderBrush="#00000000"
+                BorderThickness="0.3"
+                Click="AddLibraryItemButton_Click"
+                Content="&#xE710;"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="16"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
+        </Grid>
+        <Grid
+            x:Name="ContentPresenterGrid"
+            Margin="49,40,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="#1C1C1C">
+            <Grid
+                x:Name="LibrarySectionGrid"
+                Opacity="1"
+                Visibility="Visible">
+                <Grid
+                    Height="50"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top">
+                    <Label
+                        Height="40"
+                        Margin="10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="Library"
+                        FontFamily="Segoe UI Semibold"
+                        FontSize="20"
+                        Foreground="#CCCCCC" />
+                    <Border
+                        x:Name="LibrarySearchGrid"
+                        Width="183"
+                        Height="30"
+                        Margin="10"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        BorderBrush="#FF737373"
+                        BorderThickness="0.2">
+                        <Grid ToolTip="Search Animes">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="30" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox
+                                x:Name="LibrarySearchTextBox"
+                                Grid.Column="0"
+                                Width="Auto"
+                                Height="30"
+                                Padding="5"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Background="#FF222222"
+                                BorderBrush="#FF939393"
+                                BorderThickness="0.5"
+                                FontFamily="Segoe UI Historic"
+                                Foreground="#FFCCCCCC"
+                                GotFocus="LibrarySearchTextBox_GotFocus"
+                                LostFocus="LibrarySearchTextBox_LostFocus"
+                                Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                                Text="Search"
+                                TextChanged="LibrarySearchTextBox_TextChanged" />
+                            <Label
+                                Grid.Column="1"
+                                Width="30"
+                                Height="30"
+                                HorizontalAlignment="Right"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Background="#FF222222"
+                                BorderBrush="#FF939393"
+                                BorderThickness="0.5"
+                                Content="&#xE721;"
+                                FontFamily="Segoe MDL2 Assets"
+                                Foreground="#FFCCCCCC" />
+                        </Grid>
+                    </Border>
+                </Grid>
+                <ScrollViewer Margin="0,50,0,0" VerticalScrollBarVisibility="Hidden">
+                    <WrapPanel
+                        x:Name="LibraryWrapPanel"
+                        Margin="20,10,20,20"
+                        HorizontalAlignment="Stretch" />
+                </ScrollViewer>
+            </Grid>
+            <Grid
+                x:Name="CreditsSectionGrid"
+                Opacity="0"
+                Visibility="Hidden">
+                <Grid
+                    Height="50"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top">
+                    <Label
+                        Height="40"
+                        Margin="10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="Credits"
+                        FontFamily="Segoe UI Semibold"
+                        FontSize="20"
+                        Foreground="#CCCCCC" />
+                </Grid>
+                <TextBlock
+                    Margin="50,70,50,70"
+                    Padding="10"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="14"
+                    Foreground="#FFCCCCCC"
+                    TextAlignment="Left"
+                    TextWrapping="Wrap">
+                    AniFlow is an individual project created for personal demand. I love to watch animes and sometimes it's hard to track where I left watching.
+                    Because of that I wanted to make a program like that.<LineBreak /><LineBreak />
+                    I think I've made a great job and UI looks cool. I worked on UI pretty much because I'm already a programmer
+                    and UI designing is the thing challenging for me.<LineBreak /><LineBreak />
+                    I'm used to work alone since when I first started programming. Also these individual projects pretty help me to
+                    develop my developer skills and learn more thing as I continue.<LineBreak /><LineBreak />
+                    If these lines reach anyone reading now, I'd be really happy for any donations but this project is not commercial.</TextBlock>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

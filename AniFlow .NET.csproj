@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>AniFlow_.NET</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="aniflow-logo.png" />
+    <None Remove="dashed-border.png" />
+    <None Remove="not-available.png" />
+    <None Remove="upload-image.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="aniflow-logo.png" />
+    <Resource Include="dashed-border.png" />
+    <Resource Include="not-available.png" />
+    <Resource Include="upload-image.png" />
+  </ItemGroup>
+
+</Project>
