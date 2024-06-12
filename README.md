@@ -1,4 +1,5 @@
 ## AniFlow
+*[This README page is outdated. Please consider waiting until I update it.]*
 
 ### About AniFlow
 AniFlow is an **individual project** both created and developed by *@umurew*. The purpose of creating AniFlow is to make things easier for people to track where did they
