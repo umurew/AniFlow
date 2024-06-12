@@ -37,7 +37,7 @@ namespace AniFlow_.NET
             public static string MaximizeIcon = "\xE922";
             public static string NavigationIcon = "\xE700";
             public static string LibraryIcon = "\xE1D3";
-            public static string CreditsIcon = "\xE779";
+            public static string GearIcon = "\xE713";
             public static string AddIcon = "\xE710";
         }
 
@@ -217,22 +217,16 @@ namespace AniFlow_.NET
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
 
                 DoubleAnimation = Animations.CreditsSwitchButton__0;
-                DoubleAnimation.From = CreditsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.AddLibraryItemButton__0;
-                DoubleAnimation.From = AddLibraryItemButton.Foreground.Opacity;
+                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
 
                 NavigationButton.Content = "Collapse";
                 LibrarySwitchButton.Content = "Library";
-                CreditsSwitchButton.Content = "Credits";
-                AddLibraryItemButton.Content = "Add Library Item";
+                SettingsSwitchButton.Content = "Settings";
 
                 NavigationButton.FontFamily = new FontFamily("Segoe UI Historic");
                 LibrarySwitchButton.FontFamily = new FontFamily("Segoe UI Historic");
-                CreditsSwitchButton.FontFamily = new FontFamily("Segoe UI Historic");
-                AddLibraryItemButton.FontFamily = new FontFamily("Segoe UI Historic");
+                SettingsSwitchButton.FontFamily = new FontFamily("Segoe UI Historic");
 
                 DoubleAnimation = Animations.NavigationButton__1;
                 DoubleAnimation.From = NavigationButton.Foreground.Opacity;
@@ -243,11 +237,7 @@ namespace AniFlow_.NET
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
 
                 DoubleAnimation = Animations.CreditsSwitchButton__1;
-                DoubleAnimation.From = CreditsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.AddLibraryItemButton__1;
-                DoubleAnimation.From = AddLibraryItemButton.Foreground.Opacity;
+                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
             }
             else
@@ -269,22 +259,16 @@ namespace AniFlow_.NET
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
 
                 DoubleAnimation = Animations.CreditsSwitchButton__0;
-                DoubleAnimation.From = CreditsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.AddLibraryItemButton__0;
-                DoubleAnimation.From = AddLibraryItemButton.Foreground.Opacity;
+                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
 
                 NavigationButton.Content = MDL2FontIcons.NavigationIcon;
                 LibrarySwitchButton.Content = MDL2FontIcons.LibraryIcon;
-                CreditsSwitchButton.Content = MDL2FontIcons.CreditsIcon;
-                AddLibraryItemButton.Content = MDL2FontIcons.AddIcon;
+                SettingsSwitchButton.Content = MDL2FontIcons.GearIcon;
 
                 NavigationButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
                 LibrarySwitchButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                CreditsSwitchButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                AddLibraryItemButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                SettingsSwitchButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
 
                 DoubleAnimation = Animations.NavigationButton__1;
                 DoubleAnimation.From = NavigationButton.Foreground.Opacity;
@@ -295,11 +279,7 @@ namespace AniFlow_.NET
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
 
                 DoubleAnimation = Animations.CreditsSwitchButton__1;
-                DoubleAnimation.From = CreditsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.AddLibraryItemButton__1;
-                DoubleAnimation.From = AddLibraryItemButton.Foreground.Opacity;
+                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
                 NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
             }
 
@@ -307,50 +287,23 @@ namespace AniFlow_.NET
             NavigationButton.IsEnabled = true;
         }
 
-        private async void LibrarySwitchButton_Click(object sender, RoutedEventArgs e)
+        private async void SettingsSwitchButton_Click(object sender, RoutedEventArgs e)
         {
             DoubleAnimation DoubleAnimation;
 
             LibrarySwitchButton.IsEnabled = false;
-            CreditsSwitchButton.IsEnabled = false;
+            SettingsSwitchButton.IsEnabled = false;
 
-            if (LibrarySectionGrid.Opacity < 1)
+            if (SettingsSectionGrid.Opacity < 1)
             {
-                LibrarySectionGrid.Visibility = Visibility.Visible;
-
-                DoubleAnimation = Animations.CreditsSectionGrid__0;
-                DoubleAnimation.From = CreditsSectionGrid.Opacity;
-                CreditsSectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.LibrarySectionGrid__1;
-                DoubleAnimation.From = LibrarySectionGrid.Opacity;
-                LibrarySectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
-
-                await Task.Delay(350);
-                CreditsSectionGrid.Visibility = Visibility.Hidden;
-            }
-
-            LibrarySwitchButton.IsEnabled = true;
-            CreditsSwitchButton.IsEnabled = true;
-        }
-
-        private async void CreditsSwitchButton_Click(object sender, RoutedEventArgs e)
-        {
-            DoubleAnimation DoubleAnimation;
-
-            LibrarySwitchButton.IsEnabled = false;
-            CreditsSwitchButton.IsEnabled = false;
-
-            if (CreditsSectionGrid.Opacity < 1)
-            {
-                CreditsSectionGrid.Visibility = Visibility.Visible;
+                SettingsSectionGrid.Visibility = Visibility.Visible;
 
                 DoubleAnimation = Animations.CreditsSectionGrid__1;
-                DoubleAnimation.From = CreditsSectionGrid.Opacity;
-                CreditsSectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+                DoubleAnimation.From = SettingsSectionGrid.Opacity;
+                SettingsSectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
 
                 DoubleAnimation = Animations.LibrarySectionGrid__0;
-                DoubleAnimation.From = CreditsSectionGrid.Opacity;
+                DoubleAnimation.From = SettingsSectionGrid.Opacity;
                 LibrarySectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
 
                 await Task.Delay(350);
@@ -358,13 +311,34 @@ namespace AniFlow_.NET
             }
 
             LibrarySwitchButton.IsEnabled = true;
-            CreditsSwitchButton.IsEnabled = true;
+            SettingsSwitchButton.IsEnabled = true;
         }
 
-        private void AddLibraryItemButton_Click(object sender, RoutedEventArgs e)
+        private async void LibrarySwitchButton_Click(object sender, RoutedEventArgs e)
         {
-            AddLibraryItemWindow DialogWindow = new AddLibraryItemWindow(this);
-            DialogWindow.ShowDialog();
+            DoubleAnimation DoubleAnimation;
+
+            LibrarySwitchButton.IsEnabled = false;
+            SettingsSwitchButton.IsEnabled = false;
+
+            if (LibrarySectionGrid.Opacity < 1)
+            {
+                LibrarySectionGrid.Visibility = Visibility.Visible;
+
+                DoubleAnimation = Animations.CreditsSectionGrid__0;
+                DoubleAnimation.From = SettingsSectionGrid.Opacity;
+                SettingsSectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+                DoubleAnimation = Animations.LibrarySectionGrid__1;
+                DoubleAnimation.From = LibrarySectionGrid.Opacity;
+                LibrarySectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+                await Task.Delay(350);
+                SettingsSectionGrid.Visibility = Visibility.Hidden;
+            }
+
+            LibrarySwitchButton.IsEnabled = true;
+            SettingsSwitchButton.IsEnabled = true;
         }
 
         private void LibrarySearchTextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -408,6 +382,12 @@ namespace AniFlow_.NET
 
             if (LibraryWrapPanel != null)
                 PopulateLibraryWrapPanel();
+        }
+
+        private void AddLibraryItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            LibraryAddItemWindow DialogWindow = new LibraryAddItemWindow(this);
+            DialogWindow.ShowDialog();
         }
 
         public void PopulateLibraryWrapPanel()

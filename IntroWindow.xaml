@@ -1,0 +1,30 @@
+﻿<Window
+    x:Class="AniFlow_.NET.IntroWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AniFlow_.NET"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="MasterWindow"
+    Title="Initializing..."
+    Width="350"
+    Height="350"
+    AllowsTransparency="True"
+    Background="{x:Null}"
+    Icon="aniflow-logo.png"
+    Loaded="MasterWindow_Loaded"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Grid x:Name="MasterGrid">
+        <Image
+            x:Name="SplashImage"
+            Width="150"
+            Height="150"
+            Margin="0,0,0,0"
+            VerticalAlignment="Bottom"
+            Opacity="0"
+            Source="aniflow-logo.png" />
+    </Grid>
+</Window>

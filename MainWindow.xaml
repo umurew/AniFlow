@@ -15,6 +15,8 @@
     Background="{x:Null}"
     Icon="aniflow-logo.png"
     Loaded="MasterWindow_Loaded"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
     <Grid x:Name="MasterGrid">
@@ -108,7 +110,7 @@
                 Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
             <Button
                 x:Name="LibrarySwitchButton"
-                Grid.Row="1"
+                Grid.Row="2"
                 Margin="0,0,1,0"
                 Background="#FF222222"
                 BorderBrush="#00000000"
@@ -120,27 +122,14 @@
                 Foreground="#FFCCCCCC"
                 Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
             <Button
-                x:Name="CreditsSwitchButton"
-                Grid.Row="2"
+                x:Name="SettingsSwitchButton"
+                Grid.Row="1"
                 Margin="0,0,1,0"
                 Background="#FF222222"
                 BorderBrush="Transparent"
                 BorderThickness="0.3"
-                Click="CreditsSwitchButton_Click"
-                Content="&#xE779;"
-                FontFamily="Segoe MDL2 Assets"
-                FontSize="16"
-                Foreground="#FFCCCCCC"
-                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
-            <Button
-                x:Name="AddLibraryItemButton"
-                Grid.Row="4"
-                Margin="0,0,1,0"
-                Background="#FF222222"
-                BorderBrush="#00000000"
-                BorderThickness="0.3"
-                Click="AddLibraryItemButton_Click"
-                Content="&#xE710;"
+                Click="SettingsSwitchButton_Click"
+                Content="&#xE713;"
                 FontFamily="Segoe MDL2 Assets"
                 FontSize="16"
                 Foreground="#FFCCCCCC"
@@ -203,7 +192,8 @@
                                 Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
                                 Text="Search"
                                 TextChanged="LibrarySearchTextBox_TextChanged" />
-                            <Label
+                            <Button
+                                x:Name="AddLibraryItemButton"
                                 Grid.Column="1"
                                 Width="30"
                                 Height="30"
@@ -213,9 +203,11 @@
                                 Background="#FF222222"
                                 BorderBrush="#FF939393"
                                 BorderThickness="0.5"
-                                Content="&#xE721;"
+                                Click="AddLibraryItemButton_Click"
+                                Content="&#xE710;"
                                 FontFamily="Segoe MDL2 Assets"
-                                Foreground="#FFCCCCCC" />
+                                Foreground="#FFCCCCCC"
+                                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -227,7 +219,7 @@
                 </ScrollViewer>
             </Grid>
             <Grid
-                x:Name="CreditsSectionGrid"
+                x:Name="SettingsSectionGrid"
                 Opacity="0"
                 Visibility="Hidden">
                 <Grid
@@ -240,26 +232,11 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Content="Credits"
+                        Content="Settings"
                         FontFamily="Segoe UI Semibold"
                         FontSize="20"
                         Foreground="#CCCCCC" />
                 </Grid>
-                <TextBlock
-                    Margin="50,70,50,70"
-                    Padding="10"
-                    FontFamily="Segoe UI Historic"
-                    FontSize="14"
-                    Foreground="#FFCCCCCC"
-                    TextAlignment="Left"
-                    TextWrapping="Wrap">
-                    AniFlow is an individual project created for personal demand. I love to watch animes and sometimes it's hard to track where I left watching.
-                    Because of that I wanted to make a program like that.<LineBreak /><LineBreak />
-                    I think I've made a great job and UI looks cool. I worked on UI pretty much because I'm already a programmer
-                    and UI designing is the thing challenging for me.<LineBreak /><LineBreak />
-                    I'm used to work alone since when I first started programming. Also these individual projects pretty help me to
-                    develop my developer skills and learn more thing as I continue.<LineBreak /><LineBreak />
-                    If these lines reach anyone reading now, I'd be really happy for any donations but this project is not commercial.</TextBlock>
             </Grid>
         </Grid>
     </Grid>

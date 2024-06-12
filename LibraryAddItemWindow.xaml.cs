@@ -9,11 +9,11 @@ using System.Windows.Media.Imaging;
 
 namespace AniFlow_.NET
 {
-    public partial class AddLibraryItemWindow : Window
+    public partial class LibraryAddItemWindow : Window
     {
         private MainWindow MainWindow;
 
-        public AddLibraryItemWindow(MainWindow _MainWindow_)
+        public LibraryAddItemWindow(MainWindow _MainWindow_)
         {
             InitializeComponent();
             MainWindow = _MainWindow_;
