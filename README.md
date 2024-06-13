@@ -1,16 +1,16 @@
 # AniFlow
 AniFlow is a ongoing individual project. This README file contains information on future updates.
 
-[!NOTE]
-I am currently upstate (out-of-town) so I would not publish updates for about a month.
+>[!NOTE]
+>I am currently upstate (out-of-town) so I would not publish updates for about a month.
 
 ## Framework
 AniFlow uses .NET 8 which is the latest version and also a long-term version. I was using .NET Framework but since .NET Framework and .NET Core
 were combined into .NET, I had to upgrade my project to .NET 8 due to get security patches and future features.
 
-[!IMPORTANT]
-If you will edit or use this project, you have to install .NET 8 SDK.
-Also if you will use the release application, you have to install .NET 8 Runtime.
+>[!IMPORTANT]
+>If you will edit or use this project, you have to install .NET 8 SDK.
+>Also if you will use the release application, you have to install .NET 8 Runtime.
 
 ## Interface Framework
 AniFlow uses WPF (Windows Presentation Foundation) because WPF has many pros and more advanced & better than WinForms.
