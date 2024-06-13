@@ -2,6 +2,7 @@
 
 using Microsoft.Win32;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -17,6 +18,15 @@ namespace AniFlow_.NET
         {
             InitializeComponent();
             MainWindow = _MainWindow_;
+        }
+
+        public class InitLayout
+        {
+            public required string Name { get; set; }
+            public string[]? Aliases { get; set; }
+            public string? Author { get; set; }
+            public string? IMDB_Link { get; set; }
+            public required bool IsValidRegistry { get; set; }
         }
 
         internal class Animations
@@ -170,10 +180,14 @@ namespace AniFlow_.NET
             }
 
             string InitPath = System.IO.Path.Combine(RegistryPath, "init.json");
-            string InitContent = $"{{\"Name\": \"{ItemNameTextBox.Text}\", \"Author\": \"{ItemAuthorTextBox.Text}\"}}";
-
-            if (string.IsNullOrEmpty(ItemAuthorTextBox.Text))
-                InitContent = $"{{\"Name\": \"{ItemNameTextBox.Text}\", \"Author\": \"Unknown\"}}";
+            string InitContent = JsonSerializer.Serialize<InitLayout>(new InitLayout
+            {
+                Name = ItemNameTextBox.Text,
+                Aliases = null,
+                Author = string.IsNullOrEmpty(ItemAuthorTextBox.Text) ? "Unknown" : ItemAuthorTextBox.Text,
+                IMDB_Link = null,
+                IsValidRegistry = true
+            });
 
             File.WriteAllText(InitPath, InitContent);
             MainWindow.PopulateLibraryWrapPanel();

@@ -28,7 +28,10 @@ namespace AniFlow_.NET
         public class InitLayout
         {
             public required string Name { get; set; }
+            public string[]? Aliases { get; set; }
             public string? Author { get; set; }
+            public string? IMDB_Link { get; set; }
+            public required bool IsValidRegistry {  get; set; }
         }
 
         internal class MDL2FontIcons
@@ -378,7 +381,7 @@ namespace AniFlow_.NET
             if (LibrarySearchTextBox.Text != "Search" && !string.IsNullOrEmpty(LibrarySearchTextBox.Text))
                 LibrarySearchArguments = LibrarySearchTextBox.Text.ToLower().Trim().Split(LibrarySearchArgumentSeperator, StringSplitOptions.RemoveEmptyEntries);
             else
-                LibrarySearchArguments = []; // Array.Empty<string>()
+                LibrarySearchArguments = [];
 
             if (LibraryWrapPanel != null)
                 PopulateLibraryWrapPanel();
@@ -410,6 +413,8 @@ namespace AniFlow_.NET
                         return;
                     }
 
+                    if (init.IsValidRegistry != true) continue;
+
                     string[] nameArgs = init.Name.ToString().ToLower().Trim().Split(LibrarySearchArgumentSeperator, StringSplitOptions.RemoveEmptyEntries);
                     if (LibrarySearchArguments != null && LibrarySearchArguments.Length > 0)
                     {
@@ -437,26 +442,21 @@ namespace AniFlow_.NET
                     ContextMenu contextMenu = new ContextMenu
                     {
                         Background = new BrushConverter().ConvertFromString("#FF1F1F1F") as SolidColorBrush,
-                        Style = (Style)Application.Current.Resources["A"],
                         Padding = new Thickness(0)
                     };
 
-                    contextMenu.Items.Add(new MenuItem
+                    MenuItem DeleteItem = new MenuItem
                     {
                         Background = new BrushConverter().ConvertFromString("#FF222222") as SolidColorBrush,
                         Foreground = new BrushConverter().ConvertFromString("#FFCCCCCC") as SolidColorBrush,
                         Style = (Style)Application.Current.Resources["MenuItemBaseStyle"],
                         FontFamily = new FontFamily("Segoe UI Historic"),
-                        Header = "Remove",
-                        Icon = new Image
-                        {
-                            Source = new BitmapImage(new Uri("pack://application:,,,/not-available.png"))
-                            {
-                                CacheOption = BitmapCacheOption.OnLoad
-                            },
-                            Opacity = 0
-                        }
-                    });
+                        Header = "Delete"
+                    };
+
+                    DeleteItem.Click += DeleteItem_Click;
+
+                    contextMenu.Items.Add(DeleteItem);
 
                     Button LibraryItemMasterButton = new Button
                     {
@@ -466,7 +466,8 @@ namespace AniFlow_.NET
                         BorderThickness = new Thickness(0.5),
                         Background = new BrushConverter().ConvertFromString("#002C2C2C") as SolidColorBrush,
                         BorderBrush = new BrushConverter().ConvertFromString("#FF737373") as SolidColorBrush,
-                        Style = (Style)Application.Current.Resources["FullTransparent-Opaque-Background-Button"]
+                        Style = (Style)Application.Current.Resources["FullTransparent-Opaque-Background-Button"],
+                        Tag = directoryInfo.FullName
                     };
 
                     LibraryItemMasterButton.MouseEnter += LibraryItemMasterButton_MouseEnter;
@@ -529,6 +530,46 @@ namespace AniFlow_.NET
                     LibraryWrapPanel.Children.Add(LibraryItemMasterButton);
                 }
                 else MessageBox.Show($"Unexpected System.IO.File exception. Init file not found.\nBroken registry for {directoryInfo.Name}, delete or repair registry.", "File Not Found Exception");
+            }
+        }
+
+        private void DeleteItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem? DeleteItem = sender as MenuItem;
+            if (DeleteItem == null)
+                return;
+
+            ContextMenu? ContextMenu = DeleteItem.Parent as ContextMenu;
+            if (ContextMenu == null)
+                return;
+
+            Button? LibraryItemMasterButton = ContextMenu.PlacementTarget as Button;
+            if (LibraryItemMasterButton == null)
+                return;
+
+            WrapPanel? WrapPanel = LibraryItemMasterButton.Parent as WrapPanel;
+            if (WrapPanel == null)
+                return;
+
+            WrapPanel.Children.Remove(LibraryItemMasterButton);
+
+            if (LibraryItemMasterButton.Tag != null && Directory.Exists((string)LibraryItemMasterButton.Tag))
+            {
+                WrapPanel.Children.Remove(LibraryItemMasterButton);
+
+                string InitPath = System.IO.Path.Combine((string)LibraryItemMasterButton.Tag, "init.json");
+                if (!File.Exists(InitPath))
+                    return;
+
+                string InitContent = File.ReadAllText(InitPath);
+
+                InitLayout? Init = JsonSerializer.Deserialize<InitLayout>(InitContent);
+                if (Init == null) return;
+
+                Init.IsValidRegistry = false;
+
+                InitContent = JsonSerializer.Serialize<InitLayout>(Init);
+                File.WriteAllText(InitPath, InitContent);
             }
         }
 
