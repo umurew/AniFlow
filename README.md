@@ -11,6 +11,8 @@ were combined into .NET, I had to upgrade my project to .NET 8 due to get **secu
 >[!IMPORTANT]
 >If you will edit or use this project, you have to install **.NET 8 SDK**.
 >Also if you will use the release application, you have to install **.NET 8 Runtime**.
+>
+>Browse all .NET 8 versions of both SDK and Runtime: [Microsoft .NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ## Interface Framework
 AniFlow uses *WPF (Windows Presentation Foundation)* because WPF has many pros and more advanced & better than WinForms.
