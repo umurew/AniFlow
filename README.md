@@ -14,7 +14,7 @@ were combined into .NET, I had to upgrade my project to .NET 8 due to get **secu
 
 ## Interface Framework
 AniFlow uses *WPF (Windows Presentation Foundation)* because WPF has many pros and more advanced & better than WinForms.
-I could prefer WinUI 3 for something new but WPF is ***more stabilized** and **reliable**. Also I have experience over WPF, so I did not want to risk
+I could prefer WinUI 3 for something new but WPF is **more stabilized** and **reliable**. Also I have experience over WPF, so I did not want to risk
 projects flow.
 
 ## Diskspace & Size
