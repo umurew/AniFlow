@@ -237,6 +237,13 @@
                         FontSize="20"
                         Foreground="#CCCCCC" />
                 </Grid>
+                <Label
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Content="COMING SOON"
+                    FontFamily="Segoe UI Semibold"
+                    FontSize="24"
+                    Foreground="#FFCCCCCC" />
             </Grid>
         </Grid>
     </Grid>

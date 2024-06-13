@@ -1,38 +1,29 @@
-## AniFlow
-*[This README page is outdated. Please consider waiting until I update it.]*
+# AniFlow
+AniFlow is a ongoing individual project. This README file contains information on future updates.
 
-### About AniFlow
-AniFlow is an **individual project** both created and developed by *@umurew*. The purpose of creating AniFlow is to make things easier for people to track where did they
-left their favorite movie, series and animes.
+[!NOTE]
+I am currently upstate (out-of-town) so I would not publish updates for about a month.
 
-### User Interface & User Experience
-AniFlow has a clean and easy to understand UI. AniFlow's main window has been split to 3 main parts.
+## Framework
+AniFlow uses .NET 8 which is the latest version and also a long-term version. I was using .NET Framework but since .NET Framework and .NET Core
+were combined into .NET, I had to upgrade my project to .NET 8 due to get security patches and future features.
 
-#### 1. Title Bar
-The Title Bar is the bar at the top of the window that covers the window from one edge to the other. Title bar also contains:
-1. AniFlow Icon
-2. Minimize Button
-3. Maximize Button
-4. Exit Button
+[!IMPORTANT]
+If you will edit or use this project, you have to install .NET 8 SDK.
+Also if you will use the release application, you have to install .NET 8 Runtime.
 
-#### 2. Navigation Bar
-The Navigation Bar is the bar at the left of the window that covers the window from title bar's bottom to the bottom of the window. Navigation bar contains 4 buttons in the latest version. These buttons are:
-1. *Navigation Button:* It's used to expand or collapse the navigation bar when clicked. Purpose of this button is to make it easier for you to understand in case if you can't understand the meanings of the navigation buttons by the icons which are on the buttons.
-2. *Library Button:* It's used to navigate to library section which contains your movies, series and animes that you just added. Library is also the main-purpose of AniFlow's existence.
-3. *Credits Button:* It's used to navigate to credits section which contains a text prepared by *@umurew*. Purpose of this section is to develop the feature to pass to other sections.
-4. *Add To Library Button:* It's used to add movies, series and animes to library section. Added items will be shown up in library section.
+## Interface Framework
+AniFlow uses WPF (Windows Presentation Foundation) because WPF has many pros and more advanced & better than WinForms.
+I could prefer WinUI 3 for something new but WPF is more stabilized and reliable. Also I have experience over WPF, so I did not want to risk
+projects flow.
 
-#### 3. Content Section
-Content Section is everywhere left behind navigation bar and title bar. This section is the place where sections like library section and credits section are shown.
+## Diskspace & Size
+AniFlow is light-weight application because it is not much big project. Actually very small compared to other programs.
 
-### Application Platform
-AniFlow is built over *Microsoft's .NET 8*  and which is the latest long-term supported version.
-.Net 8 is combined with WPF (Windows Presentation Founder) in order to create AniFlow.
+## Future Updates
+I am going to add following updates in future:
 
- - [Hardware accelration](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/whats-new/net80?view=netdesktop-8.0#hardware-acceleration)
- - [OpenFolderDialog](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/whats-new/net80?view=netdesktop-8.0#openfolderdialog)
-
-Were added to WPF with .NET 8 and of course there is more but these two are the main things that were added. Of course security patches or features were added too.
-
-### Licensing
-AniFlow currently uses GNU APGL-3.0 Public license.
+- A window to modify library items
+- A proper context menu for library items
+- Options for settings section
+- Themes
