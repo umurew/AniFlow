@@ -22,117 +22,297 @@
             VerticalAlignment="Top"
             Background="#212121"
             MouseDown="TitleBarGrid_MouseDown">
-            <Image
+            <Label
                 x:Name="TitleBarIcon"
-                Width="40"
+                Width="auto"
                 Height="40"
-                Margin="5,0,5,0"
+                Margin="5,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Source="aniflow-logo.png" />
-            <Button
-                x:Name="ExitButton"
-                Grid.Column="3"
-                Width="50"
-                Height="40"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Background="#00D10000"
-                BorderBrush="{x:Null}"
-                Click="ExitButton_Click"
-                Content="&#xE8BB;"
-                FontFamily="Segoe MDL2 Assets"
-                FontSize="10"
-                Foreground="#CCCCCC"
-                Style="{DynamicResource FullTransparent-Opaque-Background-Red-Button}" />
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="Add Library Registry"
+                FontFamily="Segoe UI Historic"
+                FontSize="14"
+                Foreground="#FFCCCCCC" />
         </Grid>
         <Button
-            x:Name="UploadButton"
-            MaxWidth="140"
-            MaxHeight="210"
-            Margin="5,60,0,0"
-            HorizontalAlignment="Center"
+            x:Name="DragDropButton"
+            MaxWidth="130"
+            MaxHeight="200"
+            Margin="10,50,0,0"
+            HorizontalAlignment="Left"
             VerticalAlignment="Top"
             AllowDrop="True"
             Background="#002C2C2C"
-            BorderBrush="{x:Null}"
-            BorderThickness="0"
-            Click="UploadButton_Click"
-            DragEnter="UploadButton_DragEnter"
-            DragLeave="UploadButton_DragLeave"
-            Drop="UploadButton_Drop"
-            Style="{DynamicResource FullTransparent-Opaque-Background-Button}"
-            ToolTip="Select or Drag &amp; Drop File">
+            Click="DragDropButton_Click"
+            DragEnter="DragDropButton_DragEnter"
+            DragLeave="DragDropButton_DragLeave"
+            Drop="DragDropButton_Drop"
+            Style="{DynamicResource FullTransparent-Opaque-Background-Button}">
+            <Button.BorderBrush>
+                <VisualBrush>
+                    <VisualBrush.Visual>
+                        <Rectangle
+                            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}"
+                            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}"
+                            RadiusX="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=CornerRadius.TopRight}"
+                            RadiusY="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=CornerRadius.BottomLeft}"
+                            Stroke="#FFCBCBCB"
+                            StrokeDashArray="6 3"
+                            StrokeThickness="2" />
+                    </VisualBrush.Visual>
+                </VisualBrush>
+            </Button.BorderBrush>
             <Grid>
-                <Image x:Name="ThumbnailImage" Source="upload-image.png" />
+                <Image x:Name="SelectedImage" Opacity="0" />
                 <Image
-                    x:Name="UploadedImage"
-                    Margin="5"
-                    Stretch="UniformToFill" />
+                    x:Name="DragDropImage"
+                    Opacity="1"
+                    Source="/drag-and-drop.png" />
+                <Image
+                    x:Name="UnavailableImage"
+                    Opacity="0"
+                    Source="/unavailable.png" />
             </Grid>
         </Button>
-        <TextBox
-            x:Name="ItemNameTextBox"
-            Height="25"
-            Margin="20,311,20,0"
-            Padding="3"
+        <Label
+            Width="130"
+            Height="auto"
+            Margin="10,253,0,0"
+            Padding="0,-2,0,0"
+            HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            VerticalContentAlignment="Center"
-            Background="{x:Null}"
-            BorderBrush="#FF939393"
-            BorderThickness="0.5"
-            CaretBrush="#FFCCCCCC"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Top"
+            Content="Cover Image"
             FontFamily="Segoe UI Historic"
-            Foreground="#FFCCCCCC"
-            GotFocus="ItemNameTextBox_GotFocus"
-            LostFocus="ItemNameTextBox_LostFocus"
-            MaxLines="1"
-            Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-            Text="Enter Anime Name"
-            ToolTip="Enter Anime Name" />
-        <TextBox
-            x:Name="ItemAuthorTextBox"
-            Height="25"
-            Margin="20,343,20,0"
-            Padding="3"
+            FontSize="14"
+            Foreground="#FFCCCCCC" />
+        <Label
+            x:Name="SelectedImageDimensionLabel"
+            Width="130"
+            Height="auto"
+            Margin="10,269,0,0"
+            Padding="0,-2,0,0"
+            HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            VerticalContentAlignment="Center"
-            Background="{x:Null}"
-            BorderBrush="#FF939393"
-            BorderThickness="0.5"
-            CaretBrush="#FFCCCCCC"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Top"
+            Content="200x130"
             FontFamily="Segoe UI Historic"
-            Foreground="#FFCCCCCC"
-            GotFocus="ItemAuthorTextBox_GotFocus"
-            LostFocus="ItemAuthorTextBox_LostFocus"
-            MaxLines="1"
-            Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-            Text="Enter Anime Author"
-            ToolTip="Enter Anime Author" />
+            FontSize="12"
+            Foreground="#FFCCCCCC" />
+        <StackPanel Margin="150,50,10,210">
+            <Label
+                Width="auto"
+                Height="auto"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="Name"
+                FontFamily="Segoe UI Historic"
+                FontSize="14"
+                Foreground="#FFCCCCCC" />
+            <TextBox
+                x:Name="NameTextBox"
+                Width="auto"
+                Height="25"
+                Margin="5,-3,5,2"
+                Padding="2"
+                VerticalContentAlignment="Center"
+                Background="#FF212121"
+                BorderBrush="#FF939393"
+                BorderThickness="0.5"
+                FontSize="10"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                Text="Enter Name"
+                TextAlignment="Left" />
+            <Label
+                Width="auto"
+                Height="auto"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="Author"
+                FontFamily="Segoe UI Historic"
+                FontSize="14"
+                Foreground="#FFCCCCCC" />
+            <TextBox
+                x:Name="AuthorTextBox"
+                Width="auto"
+                Height="25"
+                Margin="5,-3,5,2"
+                Padding="2"
+                VerticalContentAlignment="Center"
+                Background="#FF212121"
+                BorderBrush="#FF939393"
+                BorderThickness="0.5"
+                FontSize="10"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                Text="Enter Author Name"
+                TextAlignment="Left" />
+            <Label
+                Width="auto"
+                Height="auto"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="IMDB Score"
+                FontFamily="Segoe UI Historic"
+                FontSize="14"
+                Foreground="#FFCCCCCC" />
+            <TextBox
+                x:Name="IMDBScoreTextBox"
+                Width="auto"
+                Height="25"
+                Margin="5,-3,5,2"
+                Padding="2"
+                VerticalContentAlignment="Center"
+                Background="#FF212121"
+                BorderBrush="#FF939393"
+                BorderThickness="0.5"
+                FontSize="10"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                Text="Enter Score"
+                TextAlignment="Left" />
+            <Label
+                Width="auto"
+                Height="auto"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="IMDB Link"
+                FontFamily="Segoe UI Historic"
+                FontSize="14"
+                Foreground="#FFCCCCCC" />
+            <TextBox
+                x:Name="IMDBLinkTextBox"
+                Width="auto"
+                Height="25"
+                Margin="5,-3,5,2"
+                Padding="2"
+                VerticalContentAlignment="Center"
+                Background="#FF212121"
+                BorderBrush="#FF939393"
+                BorderThickness="0.5"
+                FontSize="10"
+                Foreground="#FFCCCCCC"
+                Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                Text="Enter Link"
+                TextAlignment="Left" />
+        </StackPanel>
         <GridSplitter
-            Height="1"
-            Margin="5,294,5,0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
-            Background="#FF737373" />
+            Width="250"
+            Height="2"
+            Margin="0,306,0,162"
+            HorizontalAlignment="Center"
+            Background="#FF707070"
+            Cursor="Arrow"
+            IsHitTestVisible="False" />
+        <Grid Margin="10,316,10,97">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <Label
+                    Width="auto"
+                    Height="auto"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Center"
+                    Content="Season"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="14"
+                    Foreground="#FFCCCCCC" />
+                <TextBox
+                    x:Name="SeasonTextBox"
+                    Width="130"
+                    Height="25"
+                    Margin="0,-3,0,2"
+                    Padding="2"
+                    HorizontalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="#FF212121"
+                    BorderBrush="#FF939393"
+                    BorderThickness="0.5"
+                    FontSize="10"
+                    Foreground="#FFCCCCCC"
+                    Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                    Text="Enter Season Number"
+                    TextAlignment="Left" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <Label
+                    Width="auto"
+                    Height="auto"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Center"
+                    Content="Episode"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="14"
+                    Foreground="#FFCCCCCC" />
+                <TextBox
+                    x:Name="EpisodeTextBox"
+                    Width="130"
+                    Height="25"
+                    Margin="0,-3,0,2"
+                    Padding="2"
+                    HorizontalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="#FF212121"
+                    BorderBrush="#FF939393"
+                    BorderThickness="0.5"
+                    FontSize="10"
+                    Foreground="#FFCCCCCC"
+                    Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                    Text="Enter Episode Number"
+                    TextAlignment="Left" />
+            </StackPanel>
+        </Grid>
         <GridSplitter
-            Height="1"
-            Margin="5,382,5,0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
-            Background="#FF737373" />
+            Width="250"
+            Height="2"
+            Margin="0,382,0,86"
+            HorizontalAlignment="Center"
+            Background="#FF707070"
+            Cursor="Arrow"
+            IsHitTestVisible="False" />
         <Button
-            x:Name="AddButton"
-            Height="40"
-            Margin="40,0,40,25"
-            VerticalAlignment="Bottom"
+            x:Name="CancelButton"
+            Width="60"
+            Height="30"
+            Margin="0,420,85,20"
+            HorizontalAlignment="Right"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
             Background="#FF222222"
             BorderBrush="#FF939393"
             BorderThickness="0.5"
-            Click="AddButton_Click"
-            Content="Add To Library"
-            FontFamily="Segoe UI Historic"
-            FontSize="15"
+            Click="CancelButton_Click"
+            Content="Cancel"
+            FontFamily="Segoe UI Historica"
+            Foreground="#FFCCCCCC"
+            Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
+        <Button
+            x:Name="FinishButton"
+            Width="60"
+            Height="30"
+            Margin="0,420,15,20"
+            HorizontalAlignment="Right"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="#FF222222"
+            BorderBrush="#FF939393"
+            BorderThickness="0.5"
+            Click="FinishButton_Click"
+            Content="Finish"
+            FontFamily="Segoe UI Historica"
             Foreground="#FFCCCCCC"
             Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
     </Grid>

@@ -1,8 +1,6 @@
 ﻿#pragma warning disable IDE0090 // Use 'new(...)'
 
 using Microsoft.Win32;
-using System.IO;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -18,6 +16,7 @@ namespace AniFlow_.NET
         {
             InitializeComponent();
             MainWindow = _MainWindow_;
+            MasterWindow.Opacity = 0;
         }
 
         public class InitLayout
@@ -44,6 +43,14 @@ namespace AniFlow_.NET
                 Duration = new Duration(TimeSpan.FromMilliseconds(350)),
                 EasingFunction = new CubicEase()
             };
+
+
+            public static DoubleAnimation DoubleAnimation__0 = new DoubleAnimation
+            {
+                To = 0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
+                EasingFunction = new CubicEase()
+            };
         }
 
         private void MasterWindow_Loaded(object sender, RoutedEventArgs e)
@@ -61,138 +68,154 @@ namespace AniFlow_.NET
                 this.DragMove();
         }
 
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        private void DragDropButton_DragEnter(object sender, DragEventArgs e)
         {
-            this.Close();
-        }
-
-        private void UploadButton_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog OpenFileDialog = new OpenFileDialog
-            {
-                Filter = "Image Files (*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tiff)|*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tiff|All files (*.*)|*.*",
-                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
-                Multiselect = false,
-                Title = "Select File",
-                CheckFileExists = true,
-                CheckPathExists = true
-            };
-
-            if (OpenFileDialog.ShowDialog() == true)
-            {
-                string SelectedFilePath = OpenFileDialog.FileName;
-                UploadedImage.Source = new BitmapImage(new Uri(SelectedFilePath))
-                {
-                    CacheOption = BitmapCacheOption.OnLoad
-                };
-
-                ThumbnailImage.Source = new BitmapImage(new Uri("pack://application:,,,/dashed-border.png"))
-                {
-                    CacheOption = BitmapCacheOption.OnLoad
-                };
-            }
-        }
-
-        private void UploadButton_DragEnter(object sender, DragEventArgs e)
-        {
-            DoubleAnimation DoubleAnimation;
-
-            DoubleAnimation = Animations.DoubleAnimation__0_5;
-            DoubleAnimation.From = UploadedImage.Opacity;
-            UploadedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
-        }
-
-        private void UploadButton_DragLeave(object sender, DragEventArgs e)
-        {
-            DoubleAnimation DoubleAnimation;
-
-            DoubleAnimation = Animations.DoubleAnimation__1;
-            DoubleAnimation.From = UploadedImage.Opacity;
-            UploadedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
-        }
-
-        private void UploadButton_Drop(object sender, DragEventArgs e)
-        {
-            DoubleAnimation DoubleAnimation;
-
-            DoubleAnimation = Animations.DoubleAnimation__1;
-            DoubleAnimation.From = UploadedImage.Opacity;
-            UploadedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
-
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] DroppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (DroppedFiles.Length > 0)
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                string[] validExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+                string fileExtension = System.IO.Path.GetExtension(files[0]).ToLower();
+
+                DoubleAnimation DoubleAnimation;
+
+                if (Array.Exists(validExtensions, ext => ext == fileExtension))
                 {
-                    UploadedImage.Source = new BitmapImage(new Uri(DroppedFiles[0]))
-                    {
-                        CacheOption = BitmapCacheOption.OnLoad
-                    };
+                    DoubleAnimation = Animations.DoubleAnimation__1;
+                    DoubleAnimation.From = DragDropImage.Opacity;
+                    DragDropImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+                    DoubleAnimation = Animations.DoubleAnimation__0_5;
+                    DoubleAnimation.From = SelectedImage.Opacity;
+                    SelectedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+                }
+                else
+                {
+                    DoubleAnimation = Animations.DoubleAnimation__0_5;
+                    DoubleAnimation.From = DragDropImage.Opacity;
+                    DragDropImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+                    DoubleAnimation = Animations.DoubleAnimation__1;
+                    DoubleAnimation.From = UnavailableImage.Opacity;
+                    UnavailableImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+                    DoubleAnimation = Animations.DoubleAnimation__0_5;
+                    DoubleAnimation.From = SelectedImage.Opacity;
+                    SelectedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
                 }
             }
         }
 
-        private void ItemNameTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void DragDropButton_DragLeave(object sender, DragEventArgs e)
         {
-            if (!string.IsNullOrEmpty(ItemNameTextBox.Text) && ItemNameTextBox.Text == "Enter Anime Name")
-                ItemNameTextBox.Text = "";
-        }
+            DoubleAnimation DoubleAnimation;
 
-        private void ItemNameTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(ItemNameTextBox.Text))
-                ItemNameTextBox.Text = "Enter Anime Name";
-        }
-
-        private void ItemAuthorTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(ItemAuthorTextBox.Text) && ItemAuthorTextBox.Text == "Enter Anime Author")
-                ItemAuthorTextBox.Text = "";
-        }
-
-        private void ItemAuthorTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(ItemAuthorTextBox.Text))
-                ItemAuthorTextBox.Text = "Enter Anime Author";
-        }
-
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(ItemNameTextBox.Text) || ItemNameTextBox.Text == "Enter Anime Name")
+            if (SelectedImage.Source == null)
             {
-                MessageBox.Show("Item name can't be null or empty.\nEnter a name and try again.", "Argument Null Exception", MessageBoxButton.OK, MessageBoxImage.Stop);
+                DoubleAnimation = Animations.DoubleAnimation__1;
+                DoubleAnimation.From = DragDropImage.Opacity;
+                DragDropImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+            }
+            else
+            {
+                DoubleAnimation = Animations.DoubleAnimation__0;
+                DoubleAnimation.From = DragDropImage.Opacity;
+                DragDropImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+            }
+
+            DoubleAnimation = Animations.DoubleAnimation__0;
+            DoubleAnimation.From = UnavailableImage.Opacity;
+            UnavailableImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            DoubleAnimation = Animations.DoubleAnimation__1;
+            DoubleAnimation.From = SelectedImage.Opacity;
+            SelectedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+        }
+
+        private void DragDropButton_Drop(object sender, DragEventArgs e)
+        {
+            DoubleAnimation DoubleAnimation;
+
+            DoubleAnimation = Animations.DoubleAnimation__0;
+            DoubleAnimation.From = DragDropImage.Opacity;
+            DragDropImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            DoubleAnimation = Animations.DoubleAnimation__1;
+            DoubleAnimation.From = SelectedImage.Opacity;
+            SelectedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            string[] validExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+            string fileExtension = System.IO.Path.GetExtension(files[0]).ToLower();
+
+            if (files.Length > 0 && Array.Exists(validExtensions, ext => ext == fileExtension))
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(files[0], UriKind.Absolute);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+
+                SelectedImage.Source = bitmap;
+                SelectedImageDimensionLabel.Content = bitmap.PixelHeight.ToString() + 'x' + bitmap.PixelWidth.ToString();
+            }
+        }
+
+        private void DragDropButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.png, *.bmp, *.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string selectedFilePath = openFileDialog.FileName;
+
+                string[] validExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+                string fileExtension = System.IO.Path.GetExtension(selectedFilePath).ToLower();
+
+                if (Array.Exists(validExtensions, ext => ext == fileExtension))
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(selectedFilePath, UriKind.Absolute);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+
+                    SelectedImage.Source = bitmap;
+                    SelectedImageDimensionLabel.Content = bitmap.PixelHeight.ToString() + 'x' + bitmap.PixelWidth.ToString();
+
+                    DoubleAnimation DoubleAnimation;
+
+                    DoubleAnimation = Animations.DoubleAnimation__0;
+                    DoubleAnimation.From = DragDropImage.Opacity;
+                    DragDropImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+                    DoubleAnimation = Animations.DoubleAnimation__1;
+                    DoubleAnimation.From = SelectedImage.Opacity;
+                    SelectedImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+                }
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+        MasterWindow.Close();
+        }
+
+        private void FinishButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(NameTextBox.Text) || NameTextBox.Text == "Enter Name")
+            {
+                MessageBox.Show("Registry name can't be null or empty.\nEnter a name and try again.", "Argument Null Exception", MessageBoxButton.OK, MessageBoxImage.Stop);
                 return;
             }
 
-            string RegistryPath = System.IO.Path.Combine("./Library", Guid.NewGuid().ToString("D"));
-            Directory.CreateDirectory(RegistryPath);
-
-            string CoverPath = System.IO.Path.Combine(RegistryPath, "cover.png");
-            if (UploadedImage.Source != null && UploadedImage.Source is BitmapSource)
+            if (string.IsNullOrEmpty(SeasonTextBox.Text))
             {
-                BitmapSource BitmapSource = (BitmapSource)UploadedImage.Source;
-
-                JpegBitmapEncoder Encoder = new JpegBitmapEncoder();
-                Encoder.Frames.Add(BitmapFrame.Create(BitmapSource));
-
-                using (FileStream fileStream = new FileStream(CoverPath, FileMode.Create))
-                    Encoder.Save(fileStream);
+                MessageBox.Show("Registry season can't be null or empty.\nEnter a name and try again.", "Argument Null Exception", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
             }
-
-            string InitPath = System.IO.Path.Combine(RegistryPath, "init.json");
-            string InitContent = JsonSerializer.Serialize<InitLayout>(new InitLayout
-            {
-                Name = ItemNameTextBox.Text,
-                Aliases = null,
-                Author = string.IsNullOrEmpty(ItemAuthorTextBox.Text) ? "Unknown" : ItemAuthorTextBox.Text,
-                IMDB_Link = null,
-                IsValidRegistry = true
-            });
-
-            File.WriteAllText(InitPath, InitContent);
-            MainWindow.PopulateLibraryWrapPanel();
-
-            this.Close();
         }
     }
 }
