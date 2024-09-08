@@ -13,6 +13,8 @@
     MinHeight="450"
     AllowsTransparency="True"
     Background="{x:Null}"
+    BorderBrush="#FF1F1F1F"
+    BorderThickness="1,1,1,1"
     Icon="aniflow-logo.png"
     Loaded="MasterWindow_Loaded"
     ResizeMode="NoResize"
@@ -67,6 +69,7 @@
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="10"
                     Foreground="#CCCCCC"
+                    IsEnabled="False"
                     Style="{DynamicResource FullTransparent-Opaque-Background-Button}" />
                 <Button
                     x:Name="ExitButton"
@@ -133,6 +136,7 @@
                 Opacity="1"
                 Visibility="Visible">
                 <Grid
+                    x:Name="SectionTitleGrid"
                     Height="50"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top">
@@ -155,7 +159,7 @@
                         VerticalAlignment="Center"
                         BorderBrush="#FF737373"
                         BorderThickness="0.2">
-                        <Grid ToolTip="Search Animes">
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="30" />
@@ -179,7 +183,8 @@
                                 LostFocus="LibrarySearchTextBox_LostFocus"
                                 Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
                                 Text="Search"
-                                TextChanged="LibrarySearchTextBox_TextChanged" />
+                                TextChanged="LibrarySearchTextBox_TextChanged"
+                                ToolTip="Search Films/Series" />
                             <Button
                                 x:Name="AddLibraryItemButton"
                                 Grid.Column="1"
@@ -195,7 +200,8 @@
                                 Content="&#xE710;"
                                 FontFamily="Segoe MDL2 Assets"
                                 Foreground="#FFCCCCCC"
-                                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
+                                Style="{DynamicResource Dark-Light-Background-Opaque-Button}"
+                                ToolTip="Add Film/Series" />
                             <Button
                                 x:Name="RefreshButton"
                                 Grid.Column="2"
@@ -211,16 +217,254 @@
                                 Content="&#xE72C;"
                                 FontFamily="Segoe MDL2 Assets"
                                 Foreground="#FFCCCCCC"
-                                Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
+                                Style="{DynamicResource Dark-Light-Background-Opaque-Button}"
+                                ToolTip="Refresh Library" />
                         </Grid>
                     </Border>
                 </Grid>
-                <ScrollViewer Margin="0,50,0,0" VerticalScrollBarVisibility="Hidden">
+                <ScrollViewer
+                    x:Name="LibraryScrollViewer"
+                    Margin="0,50,0,0"
+                    d:IsHidden="True"
+                    VerticalScrollBarVisibility="Hidden">
                     <WrapPanel
                         x:Name="LibraryWrapPanel"
                         Margin="20,10,20,20"
                         HorizontalAlignment="Stretch" />
                 </ScrollViewer>
+                <Grid
+                    x:Name="DetailsGrid"
+                    Margin="50"
+                    Visibility="Hidden">
+                    <Button
+                        x:Name="BackButton"
+                        Width="50"
+                        Height="40"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="#002C2C2C"
+                        BorderBrush="{x:Null}"
+                        Click="BackButton_Click"
+                        Content="&#xE72B;"
+                        FontFamily="Segoe MDL2 Assets"
+                        Foreground="#FFCCCCCC"
+                        Style="{DynamicResource FullTransparent-Opaque-Background-Button}" />
+                    <Border
+                        x:Name="CoverImageBorder"
+                        MaxWidth="130"
+                        MaxHeight="200"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        BorderThickness="1">
+                        <Image x:Name="CoverImage" Source="/not-available.png" />
+                        <Border.BorderBrush>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Rectangle
+                                        Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}"
+                                        Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}"
+                                        RadiusX="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=CornerRadius.TopRight}"
+                                        RadiusY="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=CornerRadius.BottomLeft}"
+                                        Stroke="#FFCBCBCB"
+                                        StrokeDashArray="2 1"
+                                        StrokeThickness="1.5" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Border.BorderBrush>
+                    </Border>
+                    <StackPanel
+                        Width="440"
+                        MaxHeight="100"
+                        Margin="160,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox
+                                x:Name="NameTextBox"
+                                Height="auto"
+                                MaxWidth="359"
+                                Background="{x:Null}"
+                                BorderBrush="Transparent"
+                                FontFamily="Segoe UI Historic"
+                                FontSize="28"
+                                Foreground="#FFCCCCCC"
+                                IsReadOnly="True"
+                                Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                                Text="N/A"
+                                TextWrapping="Wrap" />
+                            <Grid Width="81">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Grid.Column="0"
+                                    Width="25"
+                                    Margin="0,10,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Source="/star.png" />
+                                <TextBox
+                                    x:Name="IMDBScoreTextBox"
+                                    Grid.Column="1"
+                                    Margin="0,8,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Background="{x:Null}"
+                                    BorderBrush="Transparent"
+                                    FontFamily="Segoe UI Historic"
+                                    FontSize="20"
+                                    FontWeight="Bold"
+                                    Foreground="#FFFFC911"
+                                    IsReadOnly="True"
+                                    Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                                    Text="0.0" />
+                            </Grid>
+                        </StackPanel>
+                        <TextBox
+                            x:Name="AuthorTextBox"
+                            Width="auto"
+                            Height="auto"
+                            Background="{x:Null}"
+                            BorderBrush="Transparent"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="14"
+                            Foreground="#FFCCCCCC"
+                            IsReadOnly="True"
+                            Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                            Text="N/A"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Grid
+                        x:Name="FilmDetailGrid"
+                        Width="220"
+                        Margin="170,120,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="16"
+                            Foreground="#FFCCCCCC"
+                            Text="Film Lenght" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="16"
+                            Foreground="#FFCCCCCC"
+                            Text="Resume" />
+                        <TextBox
+                            x:Name="FilmLenghtTextBox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="10,0,0,0"
+                            Background="{x:Null}"
+                            BorderBrush="Transparent"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="13"
+                            Foreground="#FFCCCCCC"
+                            IsReadOnly="True"
+                            Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                            Text="0  : 0  :  0" />
+                        <TextBox
+                            x:Name="ResumeTextBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
+                            Background="{x:Null}"
+                            BorderBrush="Transparent"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="13"
+                            Foreground="#FFCCCCCC"
+                            IsReadOnly="True"
+                            Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                            Text="0  :  0  : 0" />
+                    </Grid>
+                    <Grid
+                        x:Name="SeriesDetailGrid"
+                        Width="220"
+                        Margin="170,120,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Visibility="Hidden">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="16"
+                            Foreground="#FFCCCCCC"
+                            Text="Season" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="16"
+                            Foreground="#FFCCCCCC"
+                            Text="Episode" />
+                        <TextBox
+                            x:Name="SeasonTextBox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="10,0,0,0"
+                            Background="{x:Null}"
+                            BorderBrush="Transparent"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="13"
+                            Foreground="#FFCCCCCC"
+                            IsReadOnly="True"
+                            Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                            Text="0" />
+                        <TextBox
+                            x:Name="EpisodeTextBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
+                            Background="{x:Null}"
+                            BorderBrush="Transparent"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="13"
+                            Foreground="#FFCCCCCC"
+                            IsReadOnly="True"
+                            Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                            Text="0" />
+                    </Grid>
+                    <TextBox
+                        x:Name="IMDBLinkTextBox"
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Background="{x:Null}"
+                        BorderBrush="Transparent"
+                        Cursor="Hand"
+                        FontFamily="Segoe UI Historic"
+                        Foreground="#FFFEC60F"
+                        IsReadOnly="True"
+                        MouseDown="IMDBLinkTextBox_MouseDown"
+                        MouseEnter="IMDBLinkTextBox_MouseEnter"
+                        MouseLeave="IMDBLinkTextBox_MouseLeave"
+                        Style="{StaticResource Transparent-BorderBrush-Transparent-TextBox}"
+                        Text="N/A IMDB Page"
+                        Visibility="Hidden" />
+                </Grid>
             </Grid>
             <Grid
                 x:Name="SettingsSectionGrid"

@@ -33,7 +33,6 @@ namespace AniFlow_.NET
             public int? FilmResume {  get; set; }
             public int? SeriesSeason {  get; set; }
             public int? SeriesEpisode {  get; set; }
-            public required bool IsValidRegistry { get; set; }
             public required bool RegistryType { get; set; }
         }
 
@@ -169,6 +168,16 @@ namespace AniFlow_.NET
                 SelectedImage.Source = bitmap;
                 SelectedImageDimensionLabel.Content = bitmap.PixelHeight.ToString() + 'x' + bitmap.PixelWidth.ToString();
             }
+            else
+            {
+                DoubleAnimation = Animations.DoubleAnimation__1;
+                DoubleAnimation.From = DragDropImage.Opacity;
+                DragDropImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+                DoubleAnimation = Animations.DoubleAnimation__0;
+                DoubleAnimation.From = UnavailableImage.Opacity;
+                UnavailableImage.BeginAnimation(OpacityProperty, DoubleAnimation);
+            }
         }
 
         private void DragDropButton_Click(object sender, RoutedEventArgs e)
@@ -238,8 +247,6 @@ namespace AniFlow_.NET
                 }
             }
 
-            
-
             RegistryStructure registryStructure = new()
             {
                 DisplayName = NameTextBox.Text,
@@ -247,7 +254,6 @@ namespace AniFlow_.NET
                 IMDB_Link = string.IsNullOrEmpty(IMDBLinkTextBox.Text) ? "Unknown" : IMDBLinkTextBox.Text,
                 CoverBitmap = SelectedImage.Source != null ? BitmapFunctions.ImageSourceToBase64String(SelectedImage.Source) : null,
                 IMDB_Score = Score,
-                IsValidRegistry = true,
                 RegistryType = FilmButton.IsChecked != null && FilmButton.IsChecked == true ? true : false
             };
 

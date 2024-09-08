@@ -11,6 +11,8 @@
     Height="470"
     AllowsTransparency="True"
     Background="#FF1C1C1C"
+    BorderBrush="#FF1F1F1F"
+    BorderThickness="1,1,1,1"
     Icon="aniflow-logo.png"
     Loaded="MasterWindow_Loaded"
     ResizeMode="NoResize"

@@ -15,17 +15,17 @@
     <None Remove="dashed-border.png" />
     <None Remove="drag-and-drop.png" />
     <None Remove="not-available.png" />
+    <None Remove="star.png" />
     <None Remove="unavailable.png" />
     <None Remove="upload-image.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="aniflow-logo.png" />
-    <Resource Include="dashed-border.png" />
     <Resource Include="drag-and-drop.png" />
     <Resource Include="not-available.png" />
+    <Resource Include="star.png" />
     <Resource Include="unavailable.png" />
-    <Resource Include="upload-image.png" />
   </ItemGroup>
 
 </Project>

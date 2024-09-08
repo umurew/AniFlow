@@ -1,5 +1,6 @@
 ﻿#pragma warning disable IDE0090 // Use 'new(...)'
 
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -8,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AniFlow_.NET
 {
@@ -36,7 +36,6 @@ namespace AniFlow_.NET
             public int? FilmResume { get; set; }
             public int? SeriesSeason { get; set; }
             public int? SeriesEpisode { get; set; }
-            public required bool IsValidRegistry { get; set; }
             public required bool RegistryType { get; set; }
         }
 
@@ -53,115 +52,17 @@ namespace AniFlow_.NET
 
         internal class Animations
         {
-            public static DoubleAnimation NavigationBar__150 = new DoubleAnimation
-            {
-                To = 150,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation NavigationBar__50 = new DoubleAnimation
-            {
-                To = 50,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static ThicknessAnimation ContentPresenter__149_40_0_0 = new ThicknessAnimation
-            {
-                To = new Thickness(149, 40, 0, 0),
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static ThicknessAnimation ContentPresenter__49_40_0_0 = new ThicknessAnimation
-            {
-                To = new Thickness(49, 40, 0, 0),
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation NavigationButton__0 = new DoubleAnimation
+            public static DoubleAnimation DoubleAnimation__0 = new DoubleAnimation
             {
                 To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
+                Duration = new Duration(TimeSpan.FromMilliseconds(150)),
                 EasingFunction = new CubicEase()
             };
 
-            public static DoubleAnimation NavigationButton__1 = new DoubleAnimation
+            public static DoubleAnimation DoubleAnimation__1 = new DoubleAnimation
             {
                 To = 1,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation LibrarySwitchButton__0 = new DoubleAnimation
-            {
-                To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation LibrarySwitchButton__1 = new DoubleAnimation
-            {
-                To = 1,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation CreditsSwitchButton__0 = new DoubleAnimation
-            {
-                To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation CreditsSwitchButton__1 = new DoubleAnimation
-            {
-                To = 1,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation AddLibraryItemButton__0 = new DoubleAnimation
-            {
-                To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation AddLibraryItemButton__1 = new DoubleAnimation
-            {
-                To = 1,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation CreditsSectionGrid__1 = new DoubleAnimation
-            {
-                To = 1,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation CreditsSectionGrid__0 = new DoubleAnimation
-            {
-                To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation LibrarySectionGrid__1 = new DoubleAnimation
-            {
-                To = 1,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
-                EasingFunction = new CubicEase()
-            };
-
-            public static DoubleAnimation LibrarySectionGrid__0 = new DoubleAnimation
-            {
-                To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(350)),
+                Duration = new Duration(TimeSpan.FromMilliseconds(150)),
                 EasingFunction = new CubicEase()
             };
         }
@@ -173,15 +74,23 @@ namespace AniFlow_.NET
 
             foreach (FileInfo Registry in Registeries)
             {
-                RegistryStructure? DeserializedRegistry = JsonSerializer.Deserialize<RegistryStructure>(File.ReadAllText(Registry.FullName));
+                RegistryStructure? DeserializedRegistry = null;
+
+                try
+                {
+                    DeserializedRegistry = JsonSerializer.Deserialize<RegistryStructure>(File.ReadAllText(Registry.FullName));
+                }
+                catch (Exception Exception)
+                {
+                    Registry.Delete();
+                    continue;
+                }
 
                 if (DeserializedRegistry == null)
                 {
                     MessageBox.Show($"Unexpected System.Text.Json exception. Init was null.\nCorrupted registry for {Registry.Name}, delete or repair registry.", "ArgumentNullException");
                     return;
                 }
-
-                if (DeserializedRegistry.IsValidRegistry != true) File.Delete(Registry.FullName);
 
                 string[] NameArguments = DeserializedRegistry.DisplayName.ToString().ToLower().Trim().Split(LibrarySearchArgumentSeperator, StringSplitOptions.RemoveEmptyEntries);
                 if (LibrarySearchArguments != null && LibrarySearchArguments.Length > 0)
@@ -233,6 +142,7 @@ namespace AniFlow_.NET
 
                 LibraryItemRootButton.MouseEnter += LibraryItemMasterButton_MouseEnter;
                 LibraryItemRootButton.MouseLeave += LibraryItemMasterButton_MouseLeave;
+                LibraryItemRootButton.Click += LibraryItemRootButton_Click;
                 LibraryItemRootButton.ContextMenu = ContextMenu;
 
                 Grid LibraryItemGrid = new Grid
@@ -273,7 +183,6 @@ namespace AniFlow_.NET
                     Opacity = 0,
                     TextAlignment = TextAlignment.Center,
                     TextWrapping = TextWrapping.Wrap
-
                 };
 
                 LibraryItemGrid.Children.Add(LibraryItemCoverImage);
@@ -282,6 +191,77 @@ namespace AniFlow_.NET
 
                 LibraryWrapPanel.Children.Add(LibraryItemRootButton);
             }
+        }
+
+        private async void LibraryItemRootButton_Click(object sender, RoutedEventArgs e)
+        {
+            DoubleAnimation DoubleAnimation;
+
+            string Registry = File.ReadAllText((sender as Button).Tag.ToString());
+            RegistryStructure SerializedRegistry = JsonSerializer.Deserialize<RegistryStructure>(Registry);
+
+            NameTextBox.Text = SerializedRegistry.DisplayName;
+            AuthorTextBox.Text = SerializedRegistry.Author;
+            IMDBScoreTextBox.Text = SerializedRegistry.IMDB_Score.ToString();
+
+            IMDBLinkTextBox.Text = SerializedRegistry.DisplayName + " IMDB Page";
+
+            if (SerializedRegistry.IMDB_Link == null)
+            {
+                IMDBLinkTextBox.Visibility = Visibility.Hidden;
+                IMDBLinkTextBox.Tag = null;
+            }
+            else
+            {
+                IMDBLinkTextBox.Visibility = Visibility.Visible;
+                IMDBLinkTextBox.Tag = SerializedRegistry.IMDB_Link;
+            }
+
+            if (SerializedRegistry.RegistryType)
+            {
+                FilmLenghtTextBox.Text = SerializedRegistry.FilmLenght.ToString();
+                ResumeTextBox.Text = SerializedRegistry.FilmResume.ToString();
+
+                FilmDetailGrid.Visibility = Visibility.Visible;
+                SeriesDetailGrid.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                SeasonTextBox.Text = SerializedRegistry.SeriesSeason.ToString();
+                EpisodeTextBox.Text = SerializedRegistry.SeriesEpisode.ToString();
+
+                FilmDetailGrid.Visibility = Visibility.Hidden;
+                SeriesDetailGrid.Visibility = Visibility.Visible;
+            }
+
+            if (SerializedRegistry.CoverBitmap != null)
+            {
+                CoverImage.Source = BitmapFunctions.Base64ToImageSource(SerializedRegistry.CoverBitmap);
+                CoverImageBorder.BorderThickness = new Thickness(0);
+            }
+            else
+            {
+                CoverImage.Source = new BitmapImage(new Uri("pack://application:,,,/not-available.png")) { CacheOption = BitmapCacheOption.OnLoad };
+                CoverImageBorder.BorderThickness = new Thickness(1);
+            }
+
+            DoubleAnimation = Animations.DoubleAnimation__0;
+            DoubleAnimation.From = LibraryScrollViewer.Opacity;
+            LibraryScrollViewer.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            DoubleAnimation = Animations.DoubleAnimation__0;
+            DoubleAnimation.From = SectionTitleGrid.Opacity;
+            SectionTitleGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            await Task.Delay(350);
+
+            DetailsGrid.Visibility = Visibility.Visible;
+            LibraryScrollViewer.Visibility = Visibility.Hidden;
+            SectionTitleGrid.Visibility = Visibility.Hidden;
+
+            DoubleAnimation = Animations.DoubleAnimation__1;
+            DoubleAnimation.From = DetailsGrid.Opacity;
+            DetailsGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
         }
 
         private void MasterWindow_Loaded(object sender, RoutedEventArgs e) => PopulateLibraryWrapPanel();
@@ -324,11 +304,11 @@ namespace AniFlow_.NET
             {
                 SettingsSectionGrid.Visibility = Visibility.Visible;
 
-                DoubleAnimation = Animations.CreditsSectionGrid__1;
+                DoubleAnimation = Animations.DoubleAnimation__1;
                 DoubleAnimation.From = SettingsSectionGrid.Opacity;
                 SettingsSectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
 
-                DoubleAnimation = Animations.LibrarySectionGrid__0;
+                DoubleAnimation = Animations.DoubleAnimation__0;
                 DoubleAnimation.From = SettingsSectionGrid.Opacity;
                 LibrarySectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
 
@@ -351,11 +331,11 @@ namespace AniFlow_.NET
             {
                 LibrarySectionGrid.Visibility = Visibility.Visible;
 
-                DoubleAnimation = Animations.CreditsSectionGrid__0;
+                DoubleAnimation = Animations.DoubleAnimation__0;
                 DoubleAnimation.From = SettingsSectionGrid.Opacity;
                 SettingsSectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
 
-                DoubleAnimation = Animations.LibrarySectionGrid__1;
+                DoubleAnimation = Animations.DoubleAnimation__1;
                 DoubleAnimation.From = LibrarySectionGrid.Opacity;
                 LibrarySectionGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
 
@@ -431,27 +411,12 @@ namespace AniFlow_.NET
             Button? LibraryItemRootButton = ContextMenu.PlacementTarget as Button;
             if (LibraryItemRootButton == null) return;
 
-            WrapPanel? WrapPanel = LibraryItemRootButton.Parent as WrapPanel;
-            if (WrapPanel == null) return;
-
-            WrapPanel.Children.Remove(LibraryItemRootButton);
-
-            if (LibraryItemRootButton.Tag != null && Directory.Exists((string)LibraryItemRootButton.Tag))
+            if (LibraryItemRootButton.Tag != null)
             {
-                WrapPanel.Children.Remove(LibraryItemRootButton);
+                if (!File.Exists(LibraryItemRootButton.Tag.ToString())) return;
+                File.Delete(LibraryItemRootButton.Tag.ToString());
 
-                string InitPath = System.IO.Path.Combine((string)LibraryItemRootButton.Tag, "init.json");
-                if (!File.Exists(InitPath)) return;
-
-                string InitContent = File.ReadAllText(InitPath);
-
-                RegistryStructure? Init = JsonSerializer.Deserialize<RegistryStructure>(InitContent);
-                if (Init == null) return;
-
-                Init.IsValidRegistry = false;
-
-                InitContent = JsonSerializer.Serialize<RegistryStructure>(Init);
-                File.WriteAllText(InitPath, InitContent);
+                PopulateLibraryWrapPanel();
             }
         }
 
@@ -486,8 +451,8 @@ namespace AniFlow_.NET
                     Duration = new Duration(TimeSpan.FromMilliseconds(350))
                 };
 
-                LibraryItemCoverImage.BeginAnimation(Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo1);
-                LibraryItemTextBlock.BeginAnimation(Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo0);
+                LibraryItemCoverImage.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo1);
+                LibraryItemTextBlock.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo0);
             }
             else throw new NotImplementedException();
         }
@@ -530,9 +495,50 @@ namespace AniFlow_.NET
                     Duration = new Duration(TimeSpan.FromMilliseconds(350))
                 };
 
-                LibraryItemCoverImage.BeginAnimation(Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo03);
-                LibraryItemTextBlock.BeginAnimation(Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo1);
+                LibraryItemCoverImage.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo03);
+                LibraryItemTextBlock.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo1);
             }
+        }
+
+        private void IMDBLinkTextBox_MouseEnter(object sender, MouseEventArgs e)
+        {
+            IMDBLinkTextBox.TextDecorations = TextDecorations.Underline;
+            IMDBLinkTextBox.Foreground = new BrushConverter().ConvertFrom("#FF0078D7") as SolidColorBrush;
+        }
+
+        private void IMDBLinkTextBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            IMDBLinkTextBox.TextDecorations = null;
+            IMDBLinkTextBox.Foreground = new BrushConverter().ConvertFrom("#FFFEC60F") as SolidColorBrush;
+        }
+
+        private void IMDBLinkTextBox_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (IMDBLinkTextBox.Tag != null)
+                Process.Start(new ProcessStartInfo(IMDBLinkTextBox.Tag.ToString()));
+        }
+
+        private async void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            DoubleAnimation DoubleAnimation;
+
+            DoubleAnimation = Animations.DoubleAnimation__0;
+            DoubleAnimation.From = DetailsGrid.Opacity;
+            DetailsGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            await Task.Delay(350);
+
+            DetailsGrid.Visibility = Visibility.Hidden;
+            LibraryScrollViewer.Visibility = Visibility.Visible;
+            SectionTitleGrid.Visibility = Visibility.Visible;
+
+            DoubleAnimation = Animations.DoubleAnimation__1;
+            DoubleAnimation.From = LibraryScrollViewer.Opacity;
+            LibraryScrollViewer.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            DoubleAnimation = Animations.DoubleAnimation__1;
+            DoubleAnimation.From = SectionTitleGrid.Opacity;
+            SectionTitleGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
         }
     }
 }
