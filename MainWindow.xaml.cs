@@ -25,13 +25,19 @@ namespace AniFlow_.NET
                 Directory.CreateDirectory("./Library");
         }
 
-        public class InitLayout
+        public class RegistryStructure
         {
-            public required string Name { get; set; }
-            public string[]? Aliases { get; set; }
+            public required string DisplayName { get; set; }
             public string? Author { get; set; }
             public string? IMDB_Link { get; set; }
-            public required bool IsValidRegistry {  get; set; }
+            public double? IMDB_Score { get; set; }
+            public string? CoverBitmap { get; set; }
+            public int? FilmLenght { get; set; }
+            public int? FilmResume { get; set; }
+            public int? SeriesSeason { get; set; }
+            public int? SeriesEpisode { get; set; }
+            public required bool IsValidRegistry { get; set; }
+            public required bool RegistryType { get; set; }
         }
 
         internal class MDL2FontIcons
@@ -42,6 +48,7 @@ namespace AniFlow_.NET
             public static string LibraryIcon = "\xE1D3";
             public static string GearIcon = "\xE713";
             public static string AddIcon = "\xE710";
+            public static string RefreshIcon = "\xE72C";
         }
 
         internal class Animations
@@ -159,10 +166,125 @@ namespace AniFlow_.NET
             };
         }
 
-        private void MasterWindow_Loaded(object sender, RoutedEventArgs e)
+        public void PopulateLibraryWrapPanel()
         {
-            PopulateLibraryWrapPanel();
+            LibraryWrapPanel.Children.Clear();
+            FileInfo[] Registeries = new DirectoryInfo("./Library").GetFiles();
+
+            foreach (FileInfo Registry in Registeries)
+            {
+                RegistryStructure? DeserializedRegistry = JsonSerializer.Deserialize<RegistryStructure>(File.ReadAllText(Registry.FullName));
+
+                if (DeserializedRegistry == null)
+                {
+                    MessageBox.Show($"Unexpected System.Text.Json exception. Init was null.\nCorrupted registry for {Registry.Name}, delete or repair registry.", "ArgumentNullException");
+                    return;
+                }
+
+                if (DeserializedRegistry.IsValidRegistry != true) File.Delete(Registry.FullName);
+
+                string[] NameArguments = DeserializedRegistry.DisplayName.ToString().ToLower().Trim().Split(LibrarySearchArgumentSeperator, StringSplitOptions.RemoveEmptyEntries);
+                if (LibrarySearchArguments != null && LibrarySearchArguments.Length > 0)
+                {
+                    bool ValidSearchArguments = false;
+
+                    foreach (string NameArgument in NameArguments)
+                    {
+                        foreach (string SearchArgument in LibrarySearchArguments)
+                        {
+                            if (SearchArgument != null && NameArgument.Contains(SearchArgument)) ValidSearchArguments = true; break;
+                        }
+
+                        if (ValidSearchArguments) break;
+                    }
+
+                    if (!ValidSearchArguments) continue;
+                }
+
+                ContextMenu ContextMenu = new ContextMenu
+                {
+                    Background = new BrushConverter().ConvertFromString("#FF1F1F1F") as SolidColorBrush,
+                    Padding = new Thickness(0)
+                };
+
+                MenuItem DeleteMenuItem = new MenuItem
+                {
+                    Background = new BrushConverter().ConvertFromString("#FF222222") as SolidColorBrush,
+                    Foreground = new BrushConverter().ConvertFromString("#FFCCCCCC") as SolidColorBrush,
+                    Style = (Style)Application.Current.Resources["MenuItemBaseStyle"],
+                    FontFamily = new FontFamily("Segoe UI Historic"),
+                    Header = "Delete"
+                };
+
+                DeleteMenuItem.Click += DeleteItem_Click;
+                ContextMenu.Items.Add(DeleteMenuItem);
+
+                Button LibraryItemRootButton = new Button
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Margin = new Thickness(5, 10, 5, 10),
+                    BorderThickness = new Thickness(0.5),
+                    Background = new BrushConverter().ConvertFromString("#002C2C2C") as SolidColorBrush,
+                    BorderBrush = new BrushConverter().ConvertFromString("#FF737373") as SolidColorBrush,
+                    Style = (Style)Application.Current.Resources["FullTransparent-Opaque-Background-Button"],
+                    Tag = Registry.FullName
+                };
+
+                LibraryItemRootButton.MouseEnter += LibraryItemMasterButton_MouseEnter;
+                LibraryItemRootButton.MouseLeave += LibraryItemMasterButton_MouseLeave;
+                LibraryItemRootButton.ContextMenu = ContextMenu;
+
+                Grid LibraryItemGrid = new Grid
+                {
+                    MaxWidth = 130,
+                    MaxHeight = 200
+                };
+
+                Image LibraryItemCoverImage = new Image
+                {
+                    Opacity = 1,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Stretch = Stretch.UniformToFill
+                };
+
+                if (DeserializedRegistry.CoverBitmap == null)
+                {
+                    LibraryItemCoverImage.Source = new BitmapImage(new Uri("pack://application:,,,/not-available.png")) { CacheOption = BitmapCacheOption.OnLoad };
+                    LibraryItemCoverImage.Tag = true;
+                }
+                else
+                {
+                    LibraryItemCoverImage.Source = BitmapFunctions.Base64ToImageSource(DeserializedRegistry.CoverBitmap);
+                    LibraryItemCoverImage.Tag = false;
+                }
+
+                TextBlock LibraryItemTextBlock = new TextBlock
+                {
+                    MaxWidth = 98,
+                    Margin = new Thickness(10, 0, 10, 50),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontFamily = new FontFamily("Segoe UI Semibold"),
+                    FontSize = 18,
+                    Foreground = new BrushConverter().ConvertFromString("#FFCCCCCC") as SolidColorBrush,
+                    Text = DeserializedRegistry.DisplayName,
+                    Opacity = 0,
+                    TextAlignment = TextAlignment.Center,
+                    TextWrapping = TextWrapping.Wrap
+
+                };
+
+                LibraryItemGrid.Children.Add(LibraryItemCoverImage);
+                LibraryItemGrid.Children.Add(LibraryItemTextBlock);
+                LibraryItemRootButton.Content = LibraryItemGrid;
+
+                LibraryWrapPanel.Children.Add(LibraryItemRootButton);
+            }
         }
+
+        private void MasterWindow_Loaded(object sender, RoutedEventArgs e) => PopulateLibraryWrapPanel();
 
         private void TitleBarGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -189,106 +311,7 @@ namespace AniFlow_.NET
             }
         }
 
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
-        {
-            Environment.Exit(0);
-        }
-
-        private async void NavigationButton_Click(object sender, RoutedEventArgs e)
-        {
-            DoubleAnimation DoubleAnimation;
-            ThicknessAnimation ThicknessAnimation;
-
-            NavigationButton.IsEnabled = false;
-
-            if (NavigationBarGrid.ActualWidth < 150)
-            {
-                DoubleAnimation = Animations.NavigationBar__150;
-                DoubleAnimation.From = NavigationBarGrid.ActualWidth;
-                NavigationBarGrid.BeginAnimation(WidthProperty, DoubleAnimation);
-
-                ThicknessAnimation = Animations.ContentPresenter__149_40_0_0;
-                ThicknessAnimation.From = ContentPresenterGrid.Margin;
-                ContentPresenterGrid.BeginAnimation(MarginProperty, ThicknessAnimation);
-
-                DoubleAnimation = Animations.NavigationButton__0;
-                DoubleAnimation.From = NavigationButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.LibrarySwitchButton__0;
-                DoubleAnimation.From = LibrarySwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.CreditsSwitchButton__0;
-                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                NavigationButton.Content = "Collapse";
-                LibrarySwitchButton.Content = "Library";
-                SettingsSwitchButton.Content = "Settings";
-
-                NavigationButton.FontFamily = new FontFamily("Segoe UI Historic");
-                LibrarySwitchButton.FontFamily = new FontFamily("Segoe UI Historic");
-                SettingsSwitchButton.FontFamily = new FontFamily("Segoe UI Historic");
-
-                DoubleAnimation = Animations.NavigationButton__1;
-                DoubleAnimation.From = NavigationButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.LibrarySwitchButton__1;
-                DoubleAnimation.From = LibrarySwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.CreditsSwitchButton__1;
-                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-            }
-            else
-            {
-                DoubleAnimation = Animations.NavigationBar__50;
-                DoubleAnimation.From = NavigationBarGrid.ActualWidth;
-                NavigationBarGrid.BeginAnimation(WidthProperty, DoubleAnimation);
-
-                ThicknessAnimation = Animations.ContentPresenter__49_40_0_0;
-                ThicknessAnimation.From = ContentPresenterGrid.Margin;
-                ContentPresenterGrid.BeginAnimation(MarginProperty, ThicknessAnimation);
-
-                DoubleAnimation = Animations.NavigationButton__0;
-                DoubleAnimation.From = NavigationButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.LibrarySwitchButton__0;
-                DoubleAnimation.From = LibrarySwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.CreditsSwitchButton__0;
-                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                NavigationButton.Content = MDL2FontIcons.NavigationIcon;
-                LibrarySwitchButton.Content = MDL2FontIcons.LibraryIcon;
-                SettingsSwitchButton.Content = MDL2FontIcons.GearIcon;
-
-                NavigationButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                LibrarySwitchButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                SettingsSwitchButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
-
-                DoubleAnimation = Animations.NavigationButton__1;
-                DoubleAnimation.From = NavigationButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.LibrarySwitchButton__1;
-                DoubleAnimation.From = LibrarySwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-
-                DoubleAnimation = Animations.CreditsSwitchButton__1;
-                DoubleAnimation.From = SettingsSwitchButton.Foreground.Opacity;
-                NavigationBarGrid.BeginAnimation(SolidColorBrush.OpacityProperty, DoubleAnimation);
-            }
-
-            await Task.Delay(350);
-            NavigationButton.IsEnabled = true;
-        }
+        private void ExitButton_Click(object sender, RoutedEventArgs e) => Environment.Exit(0);
 
         private async void SettingsSwitchButton_Click(object sender, RoutedEventArgs e)
         {
@@ -389,207 +412,63 @@ namespace AniFlow_.NET
 
         private void AddLibraryItemButton_Click(object sender, RoutedEventArgs e)
         {
+            if (Application.Current.Windows.Count > 2) return;
+
             LibraryAddItemWindow DialogWindow = new LibraryAddItemWindow(this);
-            DialogWindow.ShowDialog();
+            DialogWindow.Show();
         }
 
-        public void PopulateLibraryWrapPanel()
-        {
-            LibraryWrapPanel.Children.Clear();
-            DirectoryInfo[] directories = new DirectoryInfo("./Library").GetDirectories();
-
-            foreach (DirectoryInfo directoryInfo in directories)
-            {
-                string initPath = System.IO.Path.Combine(directoryInfo.FullName, "init.json");
-
-                if (File.Exists(initPath))
-                {
-                    string initContent = File.ReadAllText(initPath);
-                    InitLayout? init = JsonSerializer.Deserialize<InitLayout>(initContent);
-
-                    if (init == null)
-                    {
-                        MessageBox.Show($"Unexpected System.Text.Json exception. Init was null.\nBroken registry for {directoryInfo.Name}, delete or repair registry.", "Argument Null Exception");
-                        return;
-                    }
-
-                    if (init.IsValidRegistry != true) continue;
-
-                    string[] nameArgs = init.Name.ToString().ToLower().Trim().Split(LibrarySearchArgumentSeperator, StringSplitOptions.RemoveEmptyEntries);
-                    if (LibrarySearchArguments != null && LibrarySearchArguments.Length > 0)
-                    {
-                        bool containInSearch = false;
-
-                        foreach (string nameArg in nameArgs)
-                        {
-                            foreach (string searchArg in LibrarySearchArguments)
-                            {
-                                if (searchArg != null && nameArg.Contains(searchArg))
-                                {
-                                    containInSearch = true;
-                                    break;
-                                }
-                            }
-
-                            if (containInSearch)
-                                break;
-                        }
-
-                        if (!containInSearch)
-                            continue;
-                    }
-
-                    ContextMenu contextMenu = new ContextMenu
-                    {
-                        Background = new BrushConverter().ConvertFromString("#FF1F1F1F") as SolidColorBrush,
-                        Padding = new Thickness(0)
-                    };
-
-                    MenuItem DeleteItem = new MenuItem
-                    {
-                        Background = new BrushConverter().ConvertFromString("#FF222222") as SolidColorBrush,
-                        Foreground = new BrushConverter().ConvertFromString("#FFCCCCCC") as SolidColorBrush,
-                        Style = (Style)Application.Current.Resources["MenuItemBaseStyle"],
-                        FontFamily = new FontFamily("Segoe UI Historic"),
-                        Header = "Delete"
-                    };
-
-                    DeleteItem.Click += DeleteItem_Click;
-
-                    contextMenu.Items.Add(DeleteItem);
-
-                    Button LibraryItemMasterButton = new Button
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Margin = new Thickness(5, 10, 5, 10),
-                        BorderThickness = new Thickness(0.5),
-                        Background = new BrushConverter().ConvertFromString("#002C2C2C") as SolidColorBrush,
-                        BorderBrush = new BrushConverter().ConvertFromString("#FF737373") as SolidColorBrush,
-                        Style = (Style)Application.Current.Resources["FullTransparent-Opaque-Background-Button"],
-                        Tag = directoryInfo.FullName
-                    };
-
-                    LibraryItemMasterButton.MouseEnter += LibraryItemMasterButton_MouseEnter;
-                    LibraryItemMasterButton.MouseLeave += LibraryItemMasterButton_MouseLeave;
-                    LibraryItemMasterButton.ContextMenu = contextMenu;
-
-                    Grid LibraryItemGrid = new Grid
-                    {
-                        MaxWidth = 130,
-                        MaxHeight = 200
-                    };
-
-                    Image LibraryItemCoverImage = new Image
-                    {
-                        Opacity = 1,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Stretch = Stretch.UniformToFill
-                    };
-
-                    if (!File.Exists(System.IO.Path.Combine(directoryInfo.FullName, "cover.png")))
-                    {
-                        LibraryItemCoverImage.Source = new BitmapImage(new Uri("pack://application:,,,/not-available.png"))
-                        {
-                            CacheOption = BitmapCacheOption.OnLoad
-                        };
-
-                        LibraryItemCoverImage.Tag = true;
-                    }
-                    else
-                    {
-                        LibraryItemCoverImage.Source = new BitmapImage(new Uri(System.IO.Path.Combine(directoryInfo.FullName, "cover.png")))
-                        {
-                            CacheOption = BitmapCacheOption.OnLoad
-                        };
-
-                        LibraryItemCoverImage.Tag = false;
-                    }
-
-                    TextBlock LibraryItemTextBlock = new TextBlock
-                    {
-                        MaxWidth = 98,
-                        Margin = new Thickness(10, 0, 10, 50),
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        FontFamily = new FontFamily("Segoe UI Semibold"),
-                        FontSize = 18,
-                        Foreground = new BrushConverter().ConvertFromString("#FFCCCCCC") as SolidColorBrush,
-                        Text = init.Name,
-                        Opacity = 0,
-                        TextAlignment = TextAlignment.Center,
-                        TextWrapping = TextWrapping.Wrap
-
-                    };
-
-                    LibraryItemGrid.Children.Add(LibraryItemCoverImage);
-                    LibraryItemGrid.Children.Add(LibraryItemTextBlock);
-                    LibraryItemMasterButton.Content = LibraryItemGrid;
-
-                    LibraryWrapPanel.Children.Add(LibraryItemMasterButton);
-                }
-                else MessageBox.Show($"Unexpected System.IO.File exception. Init file not found.\nBroken registry for {directoryInfo.Name}, delete or repair registry.", "File Not Found Exception");
-            }
-        }
+        private void RefreshButton_Click(object sender, RoutedEventArgs e) => PopulateLibraryWrapPanel();
 
         private void DeleteItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem? DeleteItem = sender as MenuItem;
-            if (DeleteItem == null)
-                return;
+            if (DeleteItem == null) return;
 
             ContextMenu? ContextMenu = DeleteItem.Parent as ContextMenu;
-            if (ContextMenu == null)
-                return;
+            if (ContextMenu == null) return;
 
-            Button? LibraryItemMasterButton = ContextMenu.PlacementTarget as Button;
-            if (LibraryItemMasterButton == null)
-                return;
+            Button? LibraryItemRootButton = ContextMenu.PlacementTarget as Button;
+            if (LibraryItemRootButton == null) return;
 
-            WrapPanel? WrapPanel = LibraryItemMasterButton.Parent as WrapPanel;
-            if (WrapPanel == null)
-                return;
+            WrapPanel? WrapPanel = LibraryItemRootButton.Parent as WrapPanel;
+            if (WrapPanel == null) return;
 
-            WrapPanel.Children.Remove(LibraryItemMasterButton);
+            WrapPanel.Children.Remove(LibraryItemRootButton);
 
-            if (LibraryItemMasterButton.Tag != null && Directory.Exists((string)LibraryItemMasterButton.Tag))
+            if (LibraryItemRootButton.Tag != null && Directory.Exists((string)LibraryItemRootButton.Tag))
             {
-                WrapPanel.Children.Remove(LibraryItemMasterButton);
+                WrapPanel.Children.Remove(LibraryItemRootButton);
 
-                string InitPath = System.IO.Path.Combine((string)LibraryItemMasterButton.Tag, "init.json");
-                if (!File.Exists(InitPath))
-                    return;
+                string InitPath = System.IO.Path.Combine((string)LibraryItemRootButton.Tag, "init.json");
+                if (!File.Exists(InitPath)) return;
 
                 string InitContent = File.ReadAllText(InitPath);
 
-                InitLayout? Init = JsonSerializer.Deserialize<InitLayout>(InitContent);
+                RegistryStructure? Init = JsonSerializer.Deserialize<RegistryStructure>(InitContent);
                 if (Init == null) return;
 
                 Init.IsValidRegistry = false;
 
-                InitContent = JsonSerializer.Serialize<InitLayout>(Init);
+                InitContent = JsonSerializer.Serialize<RegistryStructure>(Init);
                 File.WriteAllText(InitPath, InitContent);
             }
         }
 
         private void LibraryItemMasterButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Button? LibraryItemMasterButton = sender as FrameworkElement as Button;
-            if (LibraryItemMasterButton != null)
+            Button? LibraryItemRootButton = sender as FrameworkElement as Button;
+            if (LibraryItemRootButton != null)
             {
-                Grid? LibraryItemGrid = LibraryItemMasterButton.Content as Grid;
-                if (LibraryItemGrid == null)
-                    return;
+                Grid? LibraryItemGrid = LibraryItemRootButton.Content as Grid;
+                if (LibraryItemGrid == null) return;
 
                 Image? LibraryItemCoverImage = LibraryItemGrid.Children[0] as Image;
-                if (LibraryItemCoverImage == null)
-                    return;
+                if (LibraryItemCoverImage == null) return;
 
                 TextBlock? LibraryItemTextBlock = LibraryItemGrid.Children[1] as TextBlock;
 
-                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null)
-                    return;
+                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null) return;
 
                 DoubleAnimation LibraryItemCoverImage_OpacityTo1 = new DoubleAnimation
                 {
@@ -615,21 +494,18 @@ namespace AniFlow_.NET
 
         private void LibraryItemMasterButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Button? LibraryItemMasterButton = sender as FrameworkElement as Button;
-            if (LibraryItemMasterButton != null)
+            Button? LibraryItemRootButton = sender as FrameworkElement as Button;
+            if (LibraryItemRootButton != null)
             {
-                Grid? LibraryItemGrid = LibraryItemMasterButton.Content as Grid;
-                if (LibraryItemGrid == null)
-                    return;
+                Grid? LibraryItemGrid = LibraryItemRootButton.Content as Grid;
+                if (LibraryItemGrid == null) return;
 
                 Image? LibraryItemCoverImage = (LibraryItemGrid.Children[0] as Image);
-                if (LibraryItemCoverImage == null)
-                    return;
+                if (LibraryItemCoverImage == null) return;
 
                 TextBlock? LibraryItemTextBlock = (LibraryItemGrid.Children[1] as TextBlock);
 
-                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null)
-                    return;
+                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null) return;
 
                 DoubleAnimation LibraryItemCoverImage_OpacityTo03 = new DoubleAnimation
                 {

@@ -1,6 +1,7 @@
-﻿#pragma warning disable IDE0090 // Use 'new(...)'
-
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using System.Globalization;
+using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -11,21 +12,29 @@ namespace AniFlow_.NET
     public partial class LibraryAddItemWindow : Window
     {
         private MainWindow MainWindow;
+        private BitmapFunctions BitmapFunctions = new BitmapFunctions();
 
         public LibraryAddItemWindow(MainWindow _MainWindow_)
         {
             InitializeComponent();
+
             MainWindow = _MainWindow_;
             MasterWindow.Opacity = 0;
         }
 
-        public class InitLayout
+        public class RegistryStructure
         {
-            public required string Name { get; set; }
-            public string[]? Aliases { get; set; }
+            public required string DisplayName { get; set; }
             public string? Author { get; set; }
             public string? IMDB_Link { get; set; }
+            public double? IMDB_Score { get; set; }
+            public string? CoverBitmap { get; set; }
+            public int? FilmLenght {  get; set; }
+            public int? FilmResume {  get; set; }
+            public int? SeriesSeason {  get; set; }
+            public int? SeriesEpisode {  get; set; }
             public required bool IsValidRegistry { get; set; }
+            public required bool RegistryType { get; set; }
         }
 
         internal class Animations
@@ -176,6 +185,8 @@ namespace AniFlow_.NET
 
                 if (Array.Exists(validExtensions, ext => ext == fileExtension))
                 {
+                    DoubleAnimation DoubleAnimation;
+
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
                     bitmap.UriSource = new Uri(selectedFilePath, UriKind.Absolute);
@@ -184,8 +195,6 @@ namespace AniFlow_.NET
 
                     SelectedImage.Source = bitmap;
                     SelectedImageDimensionLabel.Content = bitmap.PixelHeight.ToString() + 'x' + bitmap.PixelWidth.ToString();
-
-                    DoubleAnimation DoubleAnimation;
 
                     DoubleAnimation = Animations.DoubleAnimation__0;
                     DoubleAnimation.From = DragDropImage.Opacity;
@@ -198,24 +207,109 @@ namespace AniFlow_.NET
             }
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-        MasterWindow.Close();
-        }
+        private void CancelButton_Click(object sender, RoutedEventArgs e) => MasterWindow.Close();
 
         private void FinishButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(NameTextBox.Text) || NameTextBox.Text == "Enter Name")
+            if (NameTextBox.Text == "Enter Name" || string.IsNullOrEmpty(NameTextBox.Text))
             {
-                MessageBox.Show("Registry name can't be null or empty.\nEnter a name and try again.", "Argument Null Exception", MessageBoxButton.OK, MessageBoxImage.Stop);
+                MessageBox.Show("Property DisplayName cannot be null.", "NullArgumentException");
                 return;
             }
 
-            if (string.IsNullOrEmpty(SeasonTextBox.Text))
+            if (!double.TryParse(IMDBScoreTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double Score) || Score < 0 || Score > 10)
             {
-                MessageBox.Show("Registry season can't be null or empty.\nEnter a name and try again.", "Argument Null Exception", MessageBoxButton.OK, MessageBoxImage.Stop);
+                MessageBox.Show("Property IMDBScore has to be between 0 and 10." + Score, "ArgumentOutOfRangeException");
                 return;
             }
+
+            if (FilmButton.IsChecked == true)
+            {
+                if (string.IsNullOrEmpty(LenghtTextBox.Text))
+                {
+                    MessageBox.Show("Property Lenght cannot be null.", "NullArgumentException");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(ResumeTextBox.Text))
+                {
+                    MessageBox.Show("Property Resume cannot be null.", "NullArgumentException");
+                    return;
+                }
+            }
+
+            
+
+            RegistryStructure registryStructure = new()
+            {
+                DisplayName = NameTextBox.Text,
+                Author = string.IsNullOrEmpty(AuthorTextBox.Text) ? "Unknown" : AuthorTextBox.Text,
+                IMDB_Link = string.IsNullOrEmpty(IMDBLinkTextBox.Text) ? "Unknown" : IMDBLinkTextBox.Text,
+                CoverBitmap = SelectedImage.Source != null ? BitmapFunctions.ImageSourceToBase64String(SelectedImage.Source) : null,
+                IMDB_Score = Score,
+                IsValidRegistry = true,
+                RegistryType = FilmButton.IsChecked != null && FilmButton.IsChecked == true ? true : false
+            };
+
+            if (registryStructure.RegistryType == true)
+            {
+                registryStructure.FilmLenght = int.TryParse(LenghtTextBox.Text, out int Lenght) ? Lenght : 0;
+                registryStructure.FilmResume = int.TryParse(ResumeTextBox.Text, out int Resume) ? Resume : 0;
+            }
+            else
+            {
+                registryStructure.SeriesSeason = int.TryParse(SeasonTextBox.Text, out int Season) ? Season : 0;
+                registryStructure.SeriesEpisode = int.TryParse(EpisodeTextBox.Text, out int Episode) ? Episode : 1;
+            }
+
+            string RegistryPath = Path.Combine("./Library", NameTextBox.Text + ".json");
+
+            string RegistryContent = JsonSerializer.Serialize<RegistryStructure>(registryStructure);
+            File.WriteAllText(RegistryPath, RegistryContent);
+
+            this.Close();
+        }
+
+        private void FilmButton_Checked(object sender, RoutedEventArgs e)
+        {
+            DoubleAnimation DoubleAnimation;
+
+            if (SeriesGrid == null || FilmGrid == null)
+                return;
+
+            DoubleAnimation = Animations.DoubleAnimation__0;
+            DoubleAnimation.From = SeriesGrid.Opacity;
+            SeriesGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            FilmGrid.Visibility = Visibility.Visible;
+
+            DoubleAnimation = Animations.DoubleAnimation__1;
+            DoubleAnimation.From = FilmGrid.Opacity;
+            FilmGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            SeriesGrid.Visibility = Visibility.Hidden;
+            SeriesButton.IsChecked = false;
+        }
+
+        private void SeriesButton_Checked(object sender, RoutedEventArgs e)
+        {
+            DoubleAnimation DoubleAnimation;
+
+            if (SeriesGrid == null || FilmGrid == null)
+                return;
+
+            DoubleAnimation = Animations.DoubleAnimation__0;
+            DoubleAnimation.From = FilmGrid.Opacity;
+            FilmGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            SeriesGrid.Visibility = Visibility.Visible;
+
+            DoubleAnimation = Animations.DoubleAnimation__1;
+            DoubleAnimation.From = SeriesGrid.Opacity;
+            SeriesGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+
+            FilmGrid.Visibility = Visibility.Hidden;
+            FilmButton.IsChecked = false;
         }
     }
 }

@@ -13,6 +13,8 @@
     Background="#FF1C1C1C"
     Icon="aniflow-logo.png"
     Loaded="MasterWindow_Loaded"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
     <Grid x:Name="MasterGrid">
@@ -40,7 +42,7 @@
             x:Name="DragDropButton"
             MaxWidth="130"
             MaxHeight="200"
-            Margin="10,50,0,0"
+            Margin="10,53,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             AllowDrop="True"
@@ -72,6 +74,7 @@
                     Source="/drag-and-drop.png" />
                 <Image
                     x:Name="UnavailableImage"
+                    Margin="0,-1,0,1"
                     Opacity="0"
                     Source="/unavailable.png" />
             </Grid>
@@ -79,7 +82,7 @@
         <Label
             Width="130"
             Height="auto"
-            Margin="10,253,0,0"
+            Margin="10,255,0,0"
             Padding="0,-2,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -93,7 +96,7 @@
             x:Name="SelectedImageDimensionLabel"
             Width="130"
             Height="auto"
-            Margin="10,269,0,0"
+            Margin="10,271,0,0"
             Padding="0,-2,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -103,117 +106,157 @@
             FontFamily="Segoe UI Historic"
             FontSize="12"
             Foreground="#FFCCCCCC" />
-        <StackPanel Margin="150,50,10,210">
+        <StackPanel Margin="150,50,10,169">
             <Label
                 Width="auto"
                 Height="auto"
+                Padding="5,0,0,5"
                 HorizontalAlignment="Left"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Center"
-                Content="Name"
+                Content="Display Name"
                 FontFamily="Segoe UI Historic"
-                FontSize="14"
                 Foreground="#FFCCCCCC" />
             <TextBox
                 x:Name="NameTextBox"
                 Width="auto"
                 Height="25"
-                Margin="5,-3,5,2"
+                Margin="5,0,5,6"
                 Padding="2"
                 VerticalContentAlignment="Center"
                 Background="#FF212121"
                 BorderBrush="#FF939393"
                 BorderThickness="0.5"
+                FontFamily="Segoe UI Historic"
                 FontSize="10"
                 Foreground="#FFCCCCCC"
                 Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-                Text="Enter Name"
                 TextAlignment="Left" />
             <Label
                 Width="auto"
                 Height="auto"
+                Padding="5,0,0,5"
                 HorizontalAlignment="Left"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Center"
                 Content="Author"
                 FontFamily="Segoe UI Historic"
-                FontSize="14"
                 Foreground="#FFCCCCCC" />
             <TextBox
                 x:Name="AuthorTextBox"
                 Width="auto"
                 Height="25"
-                Margin="5,-3,5,2"
+                Margin="5,0,5,6"
                 Padding="2"
                 VerticalContentAlignment="Center"
                 Background="#FF212121"
                 BorderBrush="#FF939393"
                 BorderThickness="0.5"
+                FontFamily="Segoe UI Historic"
                 FontSize="10"
                 Foreground="#FFCCCCCC"
                 Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-                Text="Enter Author Name"
                 TextAlignment="Left" />
             <Label
                 Width="auto"
                 Height="auto"
+                Padding="5,0,0,5"
                 HorizontalAlignment="Left"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Center"
                 Content="IMDB Score"
                 FontFamily="Segoe UI Historic"
-                FontSize="14"
                 Foreground="#FFCCCCCC" />
             <TextBox
                 x:Name="IMDBScoreTextBox"
                 Width="auto"
                 Height="25"
-                Margin="5,-3,5,2"
+                Margin="5,0,5,6"
                 Padding="2"
                 VerticalContentAlignment="Center"
                 Background="#FF212121"
                 BorderBrush="#FF939393"
                 BorderThickness="0.5"
+                FontFamily="Segoe UI Historic"
                 FontSize="10"
                 Foreground="#FFCCCCCC"
                 Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-                Text="Enter Score"
                 TextAlignment="Left" />
             <Label
                 Width="auto"
                 Height="auto"
+                Padding="5,0,0,5"
                 HorizontalAlignment="Left"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Center"
                 Content="IMDB Link"
                 FontFamily="Segoe UI Historic"
-                FontSize="14"
                 Foreground="#FFCCCCCC" />
             <TextBox
                 x:Name="IMDBLinkTextBox"
                 Width="auto"
                 Height="25"
-                Margin="5,-3,5,2"
+                Margin="5,0,5,6"
                 Padding="2"
                 VerticalContentAlignment="Center"
                 Background="#FF212121"
                 BorderBrush="#FF939393"
                 BorderThickness="0.5"
+                FontFamily="Segoe UI Historic"
                 FontSize="10"
                 Foreground="#FFCCCCCC"
                 Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-                Text="Enter Link"
                 TextAlignment="Left" />
+            <Label
+                Width="auto"
+                Height="auto"
+                Padding="5,0,0,5"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="Registry Type"
+                FontFamily="Segoe UI Historic"
+                Foreground="#FFCCCCCC" />
+            <StackPanel
+                MaxHeight="50"
+                Margin="5,0,5,6"
+                Orientation="Horizontal">
+                <RadioButton
+                    x:Name="FilmButton"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="#FF444444"
+                    BorderBrush="#FF939393"
+                    Checked="FilmButton_Checked"
+                    Content="Film"
+                    FontFamily="Segoe UI Historic"
+                    Foreground="#FFCCCCCC"
+                    GroupName="RegistryType"
+                    IsChecked="True" />
+                <RadioButton
+                    x:Name="SeriesButton"
+                    Background="#FF444444"
+                    BorderBrush="#FF939393"
+                    Checked="SeriesButton_Checked"
+                    Content="Series"
+                    FontFamily="Segoe UI Historic"
+                    Foreground="#FFCCCCCC"
+                    GroupName="RegistryType" />
+            </StackPanel>
         </StackPanel>
         <GridSplitter
             Width="250"
             Height="2"
-            Margin="0,306,0,162"
+            Margin="0,301,0,0"
             HorizontalAlignment="Center"
-            Background="#FF707070"
+            VerticalAlignment="Top"
+            Background="#FF939393"
             Cursor="Arrow"
             IsHitTestVisible="False" />
-        <Grid Margin="10,316,10,97">
+        <Grid
+            x:Name="FilmGrid"
+            Margin="10,314,10,99"
+            Opacity="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -222,12 +265,75 @@
                 <Label
                     Width="auto"
                     Height="auto"
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Center"
+                    Content="Film Lenght"
+                    FontFamily="Segoe UI Historic"
+                    Foreground="#FFCCCCCC" />
+                <TextBox
+                    x:Name="LenghtTextBox"
+                    Width="130"
+                    Height="25"
+                    Margin="0,-3,0,2"
+                    Padding="2"
+                    HorizontalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="#FF212121"
+                    BorderBrush="#FF939393"
+                    BorderThickness="0.5"
+                    FontSize="10"
+                    Foreground="#FFCCCCCC"
+                    Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                    TextAlignment="Left" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <Label
+                    Width="auto"
+                    Height="auto"
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Center"
+                    Content="Resume"
+                    FontFamily="Segoe UI Historic"
+                    Foreground="#FFCCCCCC" />
+                <TextBox
+                    x:Name="ResumeTextBox"
+                    Width="130"
+                    Height="25"
+                    Margin="0,-3,0,2"
+                    Padding="2"
+                    HorizontalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="#FF212121"
+                    BorderBrush="#FF939393"
+                    BorderThickness="0.5"
+                    FontSize="10"
+                    Foreground="#FFCCCCCC"
+                    Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
+                    TextAlignment="Left" />
+            </StackPanel>
+        </Grid>
+        <Grid
+            x:Name="SeriesGrid"
+            Margin="10,314,10,99"
+            Opacity="0"
+            Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <Label
+                    Height="auto"
+                    Margin="0,0,0,5"
                     HorizontalAlignment="Left"
                     HorizontalContentAlignment="Left"
                     VerticalContentAlignment="Center"
                     Content="Season"
                     FontFamily="Segoe UI Historic"
-                    FontSize="14"
                     Foreground="#FFCCCCCC" />
                 <TextBox
                     x:Name="SeasonTextBox"
@@ -240,22 +346,22 @@
                     Background="#FF212121"
                     BorderBrush="#FF939393"
                     BorderThickness="0.5"
+                    FontFamily="Segoe UI Historic"
                     FontSize="10"
                     Foreground="#FFCCCCCC"
                     Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-                    Text="Enter Season Number"
                     TextAlignment="Left" />
             </StackPanel>
             <StackPanel Grid.Column="1">
                 <Label
                     Width="auto"
                     Height="auto"
+                    Margin="0,0,0,5"
                     HorizontalAlignment="Left"
                     HorizontalContentAlignment="Left"
                     VerticalContentAlignment="Center"
                     Content="Episode"
                     FontFamily="Segoe UI Historic"
-                    FontSize="14"
                     Foreground="#FFCCCCCC" />
                 <TextBox
                     x:Name="EpisodeTextBox"
@@ -268,27 +374,20 @@
                     Background="#FF212121"
                     BorderBrush="#FF939393"
                     BorderThickness="0.5"
+                    FontFamily="Segoe UI Historic"
                     FontSize="10"
                     Foreground="#FFCCCCCC"
                     Style="{DynamicResource Dark-Light-Background-Opaque-TextBox}"
-                    Text="Enter Episode Number"
                     TextAlignment="Left" />
             </StackPanel>
         </Grid>
-        <GridSplitter
-            Width="250"
-            Height="2"
-            Margin="0,382,0,86"
-            HorizontalAlignment="Center"
-            Background="#FF707070"
-            Cursor="Arrow"
-            IsHitTestVisible="False" />
         <Button
             x:Name="CancelButton"
-            Width="60"
-            Height="30"
-            Margin="0,420,85,20"
+            Width="85"
+            Height="25"
+            Margin="0,0,105,20"
             HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             Background="#FF222222"
@@ -301,10 +400,11 @@
             Style="{DynamicResource Dark-Light-Background-Opaque-Button}" />
         <Button
             x:Name="FinishButton"
-            Width="60"
-            Height="30"
-            Margin="0,420,15,20"
+            Width="85"
+            Height="25"
+            Margin="0,0,10,20"
             HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             Background="#FF222222"
