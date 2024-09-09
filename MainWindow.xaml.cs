@@ -1,6 +1,7 @@
 ﻿#pragma warning disable IDE0090 // Use 'new(...)'
 
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -9,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace AniFlow_.NET
 {
@@ -140,8 +142,8 @@ namespace AniFlow_.NET
                     Tag = Registry.FullName
                 };
 
-                LibraryItemRootButton.MouseEnter += LibraryItemMasterButton_MouseEnter;
-                LibraryItemRootButton.MouseLeave += LibraryItemMasterButton_MouseLeave;
+                LibraryItemRootButton.MouseEnter += LibraryItemRootButton_MouseEnter;
+                LibraryItemRootButton.MouseLeave += LibraryItemRootButton_MouseLeave;
                 LibraryItemRootButton.Click += LibraryItemRootButton_Click;
                 LibraryItemRootButton.ContextMenu = ContextMenu;
 
@@ -200,6 +202,7 @@ namespace AniFlow_.NET
             string Registry = File.ReadAllText((sender as Button).Tag.ToString());
             RegistryStructure SerializedRegistry = JsonSerializer.Deserialize<RegistryStructure>(Registry);
 
+            CoverImage.Tag = (sender as Button).Tag.ToString();
             NameTextBox.Text = SerializedRegistry.DisplayName;
             AuthorTextBox.Text = SerializedRegistry.Author;
             IMDBScoreTextBox.Text = SerializedRegistry.IMDB_Score.ToString();
@@ -262,6 +265,86 @@ namespace AniFlow_.NET
             DoubleAnimation = Animations.DoubleAnimation__1;
             DoubleAnimation.From = DetailsGrid.Opacity;
             DetailsGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+        }
+
+        private void LibraryItemRootButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Button? LibraryItemRootButton = sender as FrameworkElement as Button;
+            if (LibraryItemRootButton != null)
+            {
+                Grid? LibraryItemGrid = LibraryItemRootButton.Content as Grid;
+                if (LibraryItemGrid == null) return;
+
+                Image? LibraryItemCoverImage = LibraryItemGrid.Children[0] as Image;
+                if (LibraryItemCoverImage == null) return;
+
+                TextBlock? LibraryItemTextBlock = LibraryItemGrid.Children[1] as TextBlock;
+
+                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null) return;
+
+                DoubleAnimation LibraryItemCoverImage_OpacityTo1 = new DoubleAnimation
+                {
+                    From = LibraryItemCoverImage.Opacity,
+                    To = 1,
+                    EasingFunction = new CubicEase(),
+                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
+                };
+
+                DoubleAnimation LibraryItemTextBlock_OpacityTo0 = new DoubleAnimation
+                {
+                    From = LibraryItemTextBlock.Opacity,
+                    To = 0,
+                    EasingFunction = new CubicEase(),
+                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
+                };
+
+                LibraryItemCoverImage.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo1);
+                LibraryItemTextBlock.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo0);
+            }
+            else throw new NotImplementedException();
+        }
+
+        private void LibraryItemRootButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Button? LibraryItemRootButton = sender as FrameworkElement as Button;
+            if (LibraryItemRootButton != null)
+            {
+                Grid? LibraryItemGrid = LibraryItemRootButton.Content as Grid;
+                if (LibraryItemGrid == null) return;
+
+                Image? LibraryItemCoverImage = (LibraryItemGrid.Children[0] as Image);
+                if (LibraryItemCoverImage == null) return;
+
+                TextBlock? LibraryItemTextBlock = (LibraryItemGrid.Children[1] as TextBlock);
+
+                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null) return;
+
+                DoubleAnimation LibraryItemCoverImage_OpacityTo03 = new DoubleAnimation
+                {
+                    From = LibraryItemCoverImage.Opacity,
+                    To = 0.3,
+                    EasingFunction = new CubicEase(),
+                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
+                };
+
+                if (LibraryItemCoverImage.Tag is bool)
+                {
+                    if ((bool)LibraryItemCoverImage.Tag == true)
+                        LibraryItemCoverImage_OpacityTo03.To = 0;
+                    else LibraryItemCoverImage_OpacityTo03.To = 0.3;
+                }
+
+                DoubleAnimation LibraryItemTextBlock_OpacityTo1 = new DoubleAnimation
+                {
+                    From = LibraryItemTextBlock.Opacity,
+                    To = 1,
+                    EasingFunction = new CubicEase(),
+                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
+                };
+
+                LibraryItemCoverImage.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo03);
+                LibraryItemTextBlock.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo1);
+            }
         }
 
         private void MasterWindow_Loaded(object sender, RoutedEventArgs e) => PopulateLibraryWrapPanel();
@@ -420,86 +503,6 @@ namespace AniFlow_.NET
             }
         }
 
-        private void LibraryItemMasterButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            Button? LibraryItemRootButton = sender as FrameworkElement as Button;
-            if (LibraryItemRootButton != null)
-            {
-                Grid? LibraryItemGrid = LibraryItemRootButton.Content as Grid;
-                if (LibraryItemGrid == null) return;
-
-                Image? LibraryItemCoverImage = LibraryItemGrid.Children[0] as Image;
-                if (LibraryItemCoverImage == null) return;
-
-                TextBlock? LibraryItemTextBlock = LibraryItemGrid.Children[1] as TextBlock;
-
-                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null) return;
-
-                DoubleAnimation LibraryItemCoverImage_OpacityTo1 = new DoubleAnimation
-                {
-                    From = LibraryItemCoverImage.Opacity,
-                    To = 1,
-                    EasingFunction = new CubicEase(),
-                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
-                };
-
-                DoubleAnimation LibraryItemTextBlock_OpacityTo0 = new DoubleAnimation
-                {
-                    From = LibraryItemTextBlock.Opacity,
-                    To = 0,
-                    EasingFunction = new CubicEase(),
-                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
-                };
-
-                LibraryItemCoverImage.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo1);
-                LibraryItemTextBlock.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo0);
-            }
-            else throw new NotImplementedException();
-        }
-
-        private void LibraryItemMasterButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            Button? LibraryItemRootButton = sender as FrameworkElement as Button;
-            if (LibraryItemRootButton != null)
-            {
-                Grid? LibraryItemGrid = LibraryItemRootButton.Content as Grid;
-                if (LibraryItemGrid == null) return;
-
-                Image? LibraryItemCoverImage = (LibraryItemGrid.Children[0] as Image);
-                if (LibraryItemCoverImage == null) return;
-
-                TextBlock? LibraryItemTextBlock = (LibraryItemGrid.Children[1] as TextBlock);
-
-                if (LibraryItemGrid == null || LibraryItemCoverImage == null || LibraryItemTextBlock == null) return;
-
-                DoubleAnimation LibraryItemCoverImage_OpacityTo03 = new DoubleAnimation
-                {
-                    From = LibraryItemCoverImage.Opacity,
-                    To = 0.3,
-                    EasingFunction = new CubicEase(),
-                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
-                };
-
-                if (LibraryItemCoverImage.Tag is bool)
-                {
-                    if ((bool)LibraryItemCoverImage.Tag == true)
-                        LibraryItemCoverImage_OpacityTo03.To = 0;
-                    else LibraryItemCoverImage_OpacityTo03.To = 0.3;
-                }
-
-                DoubleAnimation LibraryItemTextBlock_OpacityTo1 = new DoubleAnimation
-                {
-                    From = LibraryItemTextBlock.Opacity,
-                    To = 1,
-                    EasingFunction = new CubicEase(),
-                    Duration = new Duration(TimeSpan.FromMilliseconds(350))
-                };
-
-                LibraryItemCoverImage.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemCoverImage_OpacityTo03);
-                LibraryItemTextBlock.BeginAnimation(System.Windows.Shapes.Rectangle.OpacityProperty, LibraryItemTextBlock_OpacityTo1);
-            }
-        }
-
         private void IMDBLinkTextBox_MouseEnter(object sender, MouseEventArgs e)
         {
             IMDBLinkTextBox.TextDecorations = TextDecorations.Underline;
@@ -539,6 +542,86 @@ namespace AniFlow_.NET
             DoubleAnimation = Animations.DoubleAnimation__1;
             DoubleAnimation.From = SectionTitleGrid.Opacity;
             SectionTitleGrid.BeginAnimation(OpacityProperty, DoubleAnimation);
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (CoverImage.Tag == null) throw new ArgumentNullException();
+
+            EditButton.Visibility = Visibility.Hidden;
+            SaveButton.Visibility = Visibility.Visible;
+
+            string? Registry = File.ReadAllText(CoverImage.Tag.ToString());
+            RegistryStructure? DeserializedRegistry = JsonSerializer.Deserialize<RegistryStructure>(Registry);
+
+            if (DeserializedRegistry == null) return;
+
+            if (DeserializedRegistry.RegistryType == true)
+            {
+                FilmLenghtTextBox.IsReadOnly = false;
+                ResumeTextBox.IsReadOnly = false;
+            }
+            else
+            {
+                SeasonTextBox.IsReadOnly = false;
+                EpisodeTextBox.IsReadOnly = false;
+            }
+
+            NameTextBox.IsReadOnly = false;
+            AuthorTextBox.IsReadOnly = false;
+            IMDBScoreTextBox.IsReadOnly = false;
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (NameTextBox.Text == "Enter Name" || string.IsNullOrEmpty(NameTextBox.Text))
+            {
+                MessageBox.Show("Property DisplayName cannot be null.", "NullArgumentException");
+                return;
+            }
+
+            if (!double.TryParse(IMDBScoreTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double Score) || Score < 0 || Score > 10)
+            {
+                MessageBox.Show("Property IMDBScore has to be between 0 and 10." + Score, "ArgumentOutOfRangeException");
+                return;
+            }
+
+            EditButton.Visibility = Visibility.Visible;
+            SaveButton.Visibility = Visibility.Hidden;
+
+            string? Registry = File.ReadAllText(CoverImage.Tag.ToString());
+            RegistryStructure? DeserializedRegistry = JsonSerializer.Deserialize<RegistryStructure>(Registry);
+            BitmapFunctions BitmapFunctions = new BitmapFunctions();
+
+            if (DeserializedRegistry == null) return;
+
+            if (DeserializedRegistry.RegistryType == true)
+            {
+                FilmLenghtTextBox.IsReadOnly = true;
+                ResumeTextBox.IsReadOnly = true;
+            }
+            else
+            {
+                SeasonTextBox.IsReadOnly = true;
+                EpisodeTextBox.IsReadOnly = true;
+            }
+
+            NameTextBox.IsReadOnly = true;
+            AuthorTextBox.IsReadOnly = true;
+            IMDBScoreTextBox.IsReadOnly = true;
+
+            RegistryStructure UpdatedRegistry = new RegistryStructure()
+            {
+                DisplayName = NameTextBox.Text,
+                Author = string.IsNullOrEmpty(AuthorTextBox.Text) ? "Unknown" : AuthorTextBox.Text,
+                IMDB_Link = string.IsNullOrEmpty(IMDBLinkTextBox.Tag.ToString()) ? "Unknown" : IMDBLinkTextBox.Tag.ToString(),
+                CoverBitmap = CoverImage.Source != null ? BitmapFunctions.ImageSourceToBase64String(CoverImage.Source) : null,
+                IMDB_Score = Score,
+                RegistryType = DeserializedRegistry.RegistryType
+            };
+
+            string UptodateRegistry = JsonSerializer.Serialize<RegistryStructure>(UpdatedRegistry);
+            File.WriteAllText(CoverImage.Tag.ToString(), UptodateRegistry);
         }
     }
 }

@@ -225,7 +225,6 @@
                 <ScrollViewer
                     x:Name="LibraryScrollViewer"
                     Margin="0,50,0,0"
-                    d:IsHidden="True"
                     VerticalScrollBarVisibility="Hidden">
                     <WrapPanel
                         x:Name="LibraryWrapPanel"
@@ -249,6 +248,35 @@
                         FontFamily="Segoe MDL2 Assets"
                         Foreground="#FFCCCCCC"
                         Style="{DynamicResource FullTransparent-Opaque-Background-Button}" />
+                    <Button
+                        x:Name="EditButton"
+                        Width="50"
+                        Height="40"
+                        Margin="0,40,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="#002C2C2C"
+                        BorderBrush="{x:Null}"
+                        Click="EditButton_Click"
+                        Content="&#xE70F;"
+                        FontFamily="Segoe MDL2 Assets"
+                        Foreground="#FFCCCCCC"
+                        Style="{DynamicResource FullTransparent-Opaque-Background-Button}" />
+                    <Button
+                        x:Name="SaveButton"
+                        Width="50"
+                        Height="40"
+                        Margin="0,40,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="#002C2C2C"
+                        BorderBrush="{x:Null}"
+                        Click="SaveButton_Click"
+                        Content="&#xE74E;"
+                        FontFamily="Segoe MDL2 Assets"
+                        Foreground="#FFCCCCCC"
+                        Style="{DynamicResource FullTransparent-Opaque-Background-Button}"
+                        Visibility="Hidden" />
                     <Border
                         x:Name="CoverImageBorder"
                         MaxWidth="130"
